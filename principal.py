@@ -1,9 +1,13 @@
 from tkinter import *
 from tkinter import messagebox
 import random
+import math
 
 root = Tk()
 individues = []
+lSelection = []
+countPob = 0
+grav = 9.81
 
 fields = (
     'Población inicial',
@@ -19,12 +23,33 @@ def printList(list):
     for i in range(len(list)):
         print(list[i])
 
+def calculateXMax(Vo, tetha):
+    Xmax = ((math.pow(Vo,2) * math.sin(2*tetha))/grav)
+    return abs(Xmax)
+
+def calculateFitness(Xmax, Xobj):
+    fitness = abs(Xobj - Xmax)
+    return fitness
+
+def evaluation(inp):
+    global lSelection
+    global countPob
+    global individues
+    totFitness = 0
+    promFitness = 0
+    for i in range(len(individues)):
+        individues[i]['Xmax'] = calculateXMax(individues[i]['Vo'], individues[i]['Ele'])
+        individues[i]['Fitness'] = calculateFitness(individues[i]['Xmax'], float(inp['Posición objetivo X'].get()))
+    printList(individues)
+
 def createIndividues(pobIni):
+    global countPob
     aux = []
     for i in range(pobIni):
         dictPob = {'ID':i+1, 'Vo': random.randint(1,100), 'Ele': random.uniform(0,90), 'Xmax': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
         aux.append(dictPob)
-    printList(aux)
+        countPob += 1
+    return aux
 
 def initialize(inp):
     global individues
@@ -32,6 +57,7 @@ def initialize(inp):
 
 def start(input):
     initialize(input)
+    evaluation(input)
 
 def validModelation(input):
     try:
