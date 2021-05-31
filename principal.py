@@ -1,7 +1,9 @@
 from tkinter import *
 from tkinter import messagebox
+import random
 
 root = Tk()
+individues = []
 
 fields = (
     'Población inicial',
@@ -13,8 +15,23 @@ fields = (
     'Prob de mutación de individuo'
 )
 
-def start():
-    print('Init complete!')
+def printList(list):
+    for i in range(len(list)):
+        print(list[i])
+
+def createIndividues(pobIni):
+    aux = []
+    for i in range(pobIni):
+        dictPob = {'ID':i+1, 'Vo': random.randint(1,100), 'Ele': random.uniform(0,90), 'Xmax': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
+        aux.append(dictPob)
+    printList(aux)
+
+def initialize(inp):
+    global individues
+    individues = createIndividues(int(inp['Población inicial'].get()))
+
+def start(input):
+    initialize(input)
 
 def validModelation(input):
     try:
