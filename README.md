@@ -6,7 +6,7 @@ Considerar que el tiro parabólico está afectado por ruido (viento)
 
 ### Criterio de aceptación (configuración cañon)
 - ~~Azimuth (Angulo horizontal)~~ Descarte por plano 2D
-- Elevación (Angulo vertical)
+- [Elevación (Angulo vertical)](https://www.photopills.com/es/articulos/entendiendo-el-azimut-la-elevacion)
 - Velocidad inicial (Vo)
 
 ### Requerimientos
