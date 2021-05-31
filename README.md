@@ -4,7 +4,7 @@ Tomando en cuenta la distancia del objeto al punto donde cae la bala, determinar
 
 Considerar que el tiro parabólico está afectado por ruido
 
-### Configuración de individuos (cañon)
-- Azimuth (Angulo horizontal)
+### Criterio de aceptación (configuración cañon)
+- ~~Azimuth (Angulo horizontal)~~ Descarte por plano 2D
 - Elevación (Angulo vertical)
 - Velocidad inicial (Vo)
