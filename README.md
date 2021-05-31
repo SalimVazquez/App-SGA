@@ -4,8 +4,7 @@ Tomando en cuenta la distancia del objeto al punto donde cae la bala, determinar
 
 Considerar que el tiro parabólico está afectado por ruido
 
-### Configuración de individuos
-- Configuración del cañón
-- Azimuth
-- Elevación
-- Velocidad inicial
+### Configuración de individuos (cañon)
+- Azimuth (Angulo horizontal)
+- Elevación (Angulo vertical)
+- Velocidad inicial (Vo)
