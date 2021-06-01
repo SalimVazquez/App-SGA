@@ -8,6 +8,7 @@ root = Tk()
 lSelection = []
 lCross = []
 lMutation = []
+lTop = []
 countPob = 0
 countGen = 0
 grav = 9.81
@@ -111,6 +112,7 @@ def getProbAcu(limit):
 
 def evaluation(inp):
     global lSelection
+    global lTop
     global countPob
     global countGen
     count = 0
@@ -161,6 +163,8 @@ def evaluation(inp):
                 EleMax = lSelection[i]['Ele']
             if minFitness < lSelection[i]['Fitness']:
                 minFitness = lSelection[i]['Fitness']
+    dictTop = {'Gen #': countGen+1, 'Mejor': maxFitness, 'Peor': minFitness, 'Promedio': (totFitness/len(lSelection))}
+    lTop.append(dictTop)
     print('Sum fitness: ',totFitness)
     print('Prom fitness: ',(totFitness/len(lSelection)))
     print('Generation: ', countGen+1,' Vo: ', VoMax,' Ele:', EleMax, ' maxFitness: ', maxFitness, ' minFitness: ', minFitness)
@@ -187,6 +191,8 @@ def start(input):
     cross(input)
     print('------------------ Mutation ------------------')
     mutation(input)
+    print('------------------ Mejores Resultados ------------------')
+    printList(lTop)
 
 def validModelation(input):
     try:
