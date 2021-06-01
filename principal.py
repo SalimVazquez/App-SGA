@@ -6,6 +6,7 @@ import math
 
 root = Tk()
 lSelection = []
+lCrossover = []
 countPob = 0
 countGen = 0
 grav = 9.81
@@ -31,6 +32,21 @@ def calculateXMax(Vo, tetha):
 def calculateFitness(Xmax, Xobj):
     fitness = abs(Xobj - Xmax)
     return fitness
+
+def crossover(inp):
+    global lCrossover
+    printList(lCrossover)
+
+def selection():
+    global lSelection
+    global lCrossover
+    position = 0
+    for i in range(len(lSelection)):
+        if lSelection[i]['Count'] != 0:
+            for j in range(lSelection[i]['Count']):
+                dictCross = {'ID':position+1, 'Vo': lSelection[i]['Vo'], 'Ele': lSelection[i]['Ele'], 'VoC': 0, 'EleC': 0, 'Fitness': 0}
+                lCrossover.append(dictCross)
+                position += 1
 
 def getProbAcu(limit):
     global lSelection
@@ -86,6 +102,7 @@ def evaluation(inp):
     print('Sum fitness: ',totFitness)
     print('Prom fitness: ',(totFitness/len(lSelection)))
     print('Generation: ', countGen+1,' Vo: ', VoMax,' Ele:', EleMax, ' maxFitness: ', maxFitness, ' minFitness: ', minFitness)
+    selection()
 
 def createIndividues(pobIni):
     global countPob
@@ -103,6 +120,7 @@ def initialize(inp):
 def start(input):
     initialize(input)
     evaluation(input)
+    crossover(input)
 
 def validModelation(input):
     try:
