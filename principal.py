@@ -89,6 +89,19 @@ def selection():
                 lCross.append(dictCross)
                 position += 1
 
+def getFitnessMaxSelec():
+    global lSelection
+    maximo = 0
+    position = 0
+    for i in range(len(lSelection)):
+        if i == 0:
+            maximo = lSelection[i]['Fitness']
+        else:
+            if maximo > lSelection[i]['Fitness']:
+                maximo = lSelection[i]['Fitness']
+                position = i
+    return position
+
 def getProbAcu(limit):
     global lSelection
     a = 0
@@ -100,6 +113,7 @@ def evaluation(inp):
     global lSelection
     global countPob
     global countGen
+    count = 0
     totFitness = 0
     promFitness = 0
     for i in range(len(lSelection)):
@@ -119,11 +133,18 @@ def evaluation(inp):
             else:
                 prob = getProbAcu(j)
                 aux = [float(prob), float((prob + lSelection[j]['Prob']))]
-            if randNumbers[i] >= aux[0] and randNumbers[i] <= aux[1] and countPob <= int(inp['Población máxima'].get()):
-                lSelection[j]['Count'] += 1
-                countPob += 1
-                # print('Se encontro',randNumbers[i], ' en aux:',aux,'\nPoblación act: ',countPob)
-                break
+            if randNumbers[i] >= aux[0] and randNumbers[i] <= aux[1] and count <= int(inp['Población inicial'].get()):
+                if count < (int(inp['Población inicial'].get())-1):
+                    # print('Se encontro',randNumbers[i], ' en aux:',aux,'\nPoblación act: ',countPob)
+                    lSelection[j]['Count'] += 1
+                    countPob += 1
+                    count += 1
+                    break
+                else:
+                    pos = getFitnessMaxSelec()
+                    lSelection[pos]['Count'] += 1
+                    countPob += 1
+                    count += 1
     printList(lSelection)
     for i in range(len(lSelection)):
         if i == 0:
