@@ -35,6 +35,20 @@ def calculateFitness(Xmax, Xobj):
 
 def crossover(inp):
     global lCrossover
+
+    for i in range(0, len(lCrossover), 2):
+        auxVo1 = lCrossover[i]['Vo']
+        auxVo2 = lCrossover[i+1]['Vo']
+        lCrossover[i]['VoC'] = auxVo2
+        lCrossover[i+1]['VoC'] = auxVo1
+        # auxTetha1 = lCrossover[i]['Ele']
+        # auxTetha2 = lCrossover[i+1]['Ele']
+        lCrossover[i]['EleC'] = lCrossover[i]['Ele']
+        lCrossover[i+1]['EleC'] = lCrossover[i+1]['Ele']
+    
+    for i in range(len(lCrossover)):
+        auxMax = calculateXMax(random.randint(1,100), random.uniform(0,90))
+        lCrossover[i]['Fitness'] = calculateFitness(auxMax, float(inp['Posición objetivo X'].get()))
     printList(lCrossover)
 
 def selection():
