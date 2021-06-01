@@ -6,7 +6,8 @@ import math
 
 root = Tk()
 lSelection = []
-lCrossover = []
+lCross = []
+lMutation = []
 countPob = 0
 countGen = 0
 grav = 9.81
@@ -33,33 +34,59 @@ def calculateFitness(Xmax, Xobj):
     fitness = abs(Xobj - Xmax)
     return fitness
 
-def crossover(inp):
-    global lCrossover
-
-    for i in range(0, len(lCrossover), 2):
-        auxVo1 = lCrossover[i]['Vo']
-        auxVo2 = lCrossover[i+1]['Vo']
-        lCrossover[i]['VoC'] = auxVo2
-        lCrossover[i+1]['VoC'] = auxVo1
-        # auxTetha1 = lCrossover[i]['Ele']
-        # auxTetha2 = lCrossover[i+1]['Ele']
-        lCrossover[i]['EleC'] = lCrossover[i]['Ele']
-        lCrossover[i+1]['EleC'] = lCrossover[i+1]['Ele']
-    
-    for i in range(len(lCrossover)):
+def mutation(inp):
+    global lMutation
+    Pmi = float(inp['Prob de mutación de individuo'].get())
+    Pmb = float(inp['Prob de mutación de bits'].get())
+    Pm = (Pmi/100) * (Pmb/100)
+    for i in range(len(lMutation)):
+        randomGen = (random.randint(1,100)/100)
+        alter = random.randint(-5,5)
+        if randomGen < Pm and (i+1) % 2 == 0:
+            lMutation[i]['VoR'] = lMutation[i]['VoC'] + alter
+            lMutation[i]['EleR'] = lMutation[i]['EleC']
+        elif randomGen < Pm and (i+1) % 2 != 0:
+            lMutation[i]['VoR'] = lMutation[i]['VoC']
+            lMutation[i]['EleR'] = lMutation[i]['EleC'] + alter
+        else:
+            lMutation[i]['VoR'] = lMutation[i]['VoC']
+            lMutation[i]['EleR'] = lMutation[i]['EleC']
+    for i in range(len(lMutation)):
         auxMax = calculateXMax(random.randint(1,100), random.uniform(0,90))
-        lCrossover[i]['Fitness'] = calculateFitness(auxMax, float(inp['Posición objetivo X'].get()))
-    printList(lCrossover)
+        lMutation[i]['Fitness'] = calculateFitness(auxMax, float(inp['Posición objetivo X'].get()))
+    printList(lMutation)
+
+def cross(inp):
+    global lCross
+    global lMutation
+    position = 0
+    for i in range(0, len(lCross), 2):
+        auxVo1 = lCross[i]['Vo']
+        auxVo2 = lCross[i+1]['Vo']
+        lCross[i]['VoC'] = auxVo2
+        lCross[i+1]['VoC'] = auxVo1
+        # auxTetha1 = lCross[i]['Ele']
+        # auxTetha2 = lCross[i+1]['Ele']
+        lCross[i]['EleC'] = lCross[i]['Ele']
+        lCross[i+1]['EleC'] = lCross[i+1]['Ele']
+    
+    for i in range(len(lCross)):
+        auxMax = calculateXMax(random.randint(1,100), random.uniform(0,90))
+        lCross[i]['Fitness'] = calculateFitness(auxMax, float(inp['Posición objetivo X'].get()))
+        dictMut = {'ID': position+1, 'VoC': lCross[i]['VoC'], 'EleC': lCross[i]['EleC'], 'VoR':  0, 'EleR': 0, 'Fitness': 0}
+        lMutation.append(dictMut)
+        position += 1
+    printList(lCross)
 
 def selection():
     global lSelection
-    global lCrossover
+    global lCross
     position = 0
     for i in range(len(lSelection)):
         if lSelection[i]['Count'] != 0:
             for j in range(lSelection[i]['Count']):
                 dictCross = {'ID':position+1, 'Vo': lSelection[i]['Vo'], 'Ele': lSelection[i]['Ele'], 'VoC': 0, 'EleC': 0, 'Fitness': 0}
-                lCrossover.append(dictCross)
+                lCross.append(dictCross)
                 position += 1
 
 def getProbAcu(limit):
@@ -133,8 +160,12 @@ def initialize(inp):
 
 def start(input):
     initialize(input)
+    print('------------------ Selection ------------------')
     evaluation(input)
-    crossover(input)
+    print('------------------ Cross ------------------')
+    cross(input)
+    print('------------------ Mutation ------------------')
+    mutation(input)
 
 def validModelation(input):
     try:
