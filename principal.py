@@ -55,6 +55,17 @@ def poda(ite):
         lSelection.append(dictSel)
     print('------------------ Poda ------------------')
     printList(lGen)
+    lGen.clear()
+
+def cleanLists():
+    global lSelection
+    global lCross
+    global lMutation
+    global contPob
+    lSelection.clear()
+    lCross.clear()
+    lMutation.clear()
+    contPob = 0
 
 def mutation(inp):
     global lMutation
@@ -89,6 +100,7 @@ def mutation(inp):
             lGen[i]['EleM'] = lGen[i]['EleP']
             lGen[i]['fitnessM'] = lGen[i]['fitnessP']
     printList(lMutation)
+    cleanLists()
     poda(2)
 
 def cross(inp):
