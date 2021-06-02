@@ -36,6 +36,26 @@ def calculateFitness(Xmax, Xobj):
     fitness = abs(Xobj - Xmax)
     return fitness
 
+def poda(ite):
+    global lSelection
+    global lGen
+    global countPob
+    auxGen = lGen
+    auxGen = sorted(auxGen, key=lambda x: x['fitnessM'])
+    lSelection.clear()
+    for i in range(ite):
+        if auxGen[i]['fitnessP'] < auxGen[i]['fitnessH']:
+            dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoP'], 'Ele': auxGen[i]['EleP'], 'Xmax': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
+        else:
+            dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoH'], 'Ele': auxGen[i]['EleH'], 'Xmax': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
+        lSelection.append(dictSel)
+        countPob += 1
+    for i in range(2, len(auxGen)):
+        dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoH'], 'Ele': auxGen[i]['EleH'], 'Xmax': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
+        lSelection.append(dictSel)
+    print('------------------ Poda ------------------')
+    printList(lGen)
+
 def mutation(inp):
     global lMutation
     global lGen
@@ -69,8 +89,7 @@ def mutation(inp):
             lGen[i]['EleM'] = lGen[i]['EleP']
             lGen[i]['fitnessM'] = lGen[i]['fitnessP']
     printList(lMutation)
-    print('------------------ Generaciones ------------------')
-    printList(lGen)
+    poda(2)
 
 def cross(inp):
     global lCross
