@@ -9,6 +9,7 @@ lSelection = []
 lCross = []
 lMutation = []
 lTop = []
+lGen = []
 countPob = 0
 countGen = 0
 grav = 9.81
@@ -37,6 +38,7 @@ def calculateFitness(Xmax, Xobj):
 
 def mutation(inp):
     global lMutation
+    global lGen
     Pmi = float(inp['Prob de mutación de individuo'].get())
     Pmb = float(inp['Prob de mutación de bits'].get())
     Pm = (Pmi/100) * (Pmb/100)
@@ -55,7 +57,20 @@ def mutation(inp):
     for i in range(len(lMutation)):
         auxMax = calculateXMax(random.randint(1,100), random.uniform(0,90))
         lMutation[i]['Fitness'] = calculateFitness(auxMax, float(inp['Posición objetivo X'].get()))
+        lGen[i]['VoH'] = lMutation[i]['VoR']
+        lGen[i]['EleH'] = lMutation[i]['EleR']
+        lGen[i]['fitnessH'] = lMutation[i]['Fitness']
+        if lGen[i]['fitnessH'] < lGen[i]['fitnessP']:
+            lGen[i]['VoM'] = lGen[i]['VoH']
+            lGen[i]['EleM'] = lGen[i]['EleH']
+            lGen[i]['fitnessM'] = lGen[i]['fitnessH']
+        else:
+            lGen[i]['VoM'] = lGen[i]['VoP']
+            lGen[i]['EleM'] = lGen[i]['EleP']
+            lGen[i]['fitnessM'] = lGen[i]['fitnessP']
     printList(lMutation)
+    print('------------------ Generaciones ------------------')
+    printList(lGen)
 
 def cross(inp):
     global lCross
@@ -82,12 +97,15 @@ def cross(inp):
 def selection():
     global lSelection
     global lCross
+    global lGen
     position = 0
     for i in range(len(lSelection)):
         if lSelection[i]['Count'] != 0:
             for j in range(lSelection[i]['Count']):
                 dictCross = {'ID':position+1, 'Vo': lSelection[i]['Vo'], 'Ele': lSelection[i]['Ele'], 'VoC': 0, 'EleC': 0, 'Fitness': 0}
                 lCross.append(dictCross)
+                dictGen = {'ID': position+1, 'VoP': lSelection[i]['Vo'], 'EleP': lSelection[i]['Ele'], 'fitnessP': lSelection[i]['Fitness'], 'VoH': 0, 'EleH': 0, 'fitnessH': 0, 'VoM': 0, 'EleM': 0, 'fitnessM': 0}
+                lGen.append(dictGen)
                 position += 1
 
 def getFitnessMaxSelec():
