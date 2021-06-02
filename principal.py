@@ -233,15 +233,19 @@ def initialize(inp):
     lSelection = createIndividues(int(inp['Población inicial'].get()))
 
 def start(input):
+    global countGen
     initialize(input)
-    print('------------------ Selection ------------------')
-    evaluation(input)
-    print('------------------ Cross ------------------')
-    cross(input)
-    print('------------------ Mutation ------------------')
-    mutation(input)
-    print('------------------ Mejores Resultados ------------------')
-    printList(lTop)
+    while countGen < 5:
+        print('------------------ Selection #',countGen+1,' ------------------')
+        evaluation(input)
+        print('------------------ Cross #',countGen+1,' ------------------')
+        cross(input)
+        print('------------------ Mutation #',countGen+1,' ------------------')
+        mutation(input)
+        countGen += 1
+    else: 
+        print('------------------ Mejores Resultados ------------------')
+        printList(lTop)
 
 def validModelation(input):
     try:
