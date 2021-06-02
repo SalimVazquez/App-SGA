@@ -1,6 +1,8 @@
+import tkinter
 from tkinter import *
 from tkinter import messagebox
 import numpy as np
+import matplotlib.pyplot as plot
 import random
 import math
 
@@ -232,6 +234,65 @@ def initialize(inp):
     global lSelection
     lSelection = createIndividues(int(inp['Población inicial'].get()))
 
+def ecuationTray(a,b,x):
+    return(a*x-b*x**2)
+
+def graphParabolic(list):
+    global grav
+    for i in range(len(list)):
+        vi = list[i]['Vo']
+        inc = list[i]['Ele']
+        tetha = ((inc*math.pi)/100)
+        a = math.tan(tetha)
+        b = ((grav)/((2*vi**2)*math.cos(inc)**2))
+        ymax = (vi**2)*(np.sin(inc)*math.sin(inc))/(2*grav)
+        xmax = (vi**2)*(np.sin(2*inc))/(grav)
+        tmax=(vi*math.sin(inc))/(grav)
+        tv=2*(tmax)
+        x = np.linspace(0,xmax, 500)
+        plot.figure("App-SGA", figsize=(10,8), dpi=80, facecolor="y",edgecolor="c")
+        # plot.axes(axisbg="orange")
+        # añadimos el titulo
+        # title("Tiro al blanco", 
+            # fontsize=15,color="blue",verticalalignment="baseline",horizontalalignment = "center")  
+        # añadimos el subtitulo
+        plot.suptitle("App-SGA",fontsize=20,color="red")
+        # xlabel("xmax",fontsize=20,color="red")                                      
+        # ylabel("ymax",fontsize=20,color="blue")
+        #añadimos texto
+        plot.text(((np.argmax(ecuationTray(a,b,x)))/2),np.max(ecuationTray(a,b,x))+1,"vi=",fontsize=10)
+        plot.text(((np.argmax(ecuationTray(a,b,x)))/2)+11,np.max(ecuationTray(a,b,x))+1,(str(vi)+"m/s"),fontsize=10)
+
+        # Añadimos la rejilla en la gráfica
+        plot.grid(True)                                                              
+        plot.grid(color = '0.5', linestyle = '--', linewidth = 1)
+        # Añadimos los ejes 
+        # plot.axis("tight")
+
+        # dibujamos y ponemos etiquetas a la gráfica
+        plot.text(3,1,inc,fontsize=10)
+        plot.plot(x, ecuationTray(a,b,x), "red", linewidth = 2, label = (str(inc)+"º"))   
+        # añadimos la leyenda
+        plot.legend(loc = 4,fontsize=10)                                                         
+        #anotaciones en el gráfico
+        # plot.annotate('Altura Máxima',
+        #     xy = (xmax/2, ymax),
+        #     xycoords = 'data',
+        #     xytext = (-70, -50),
+        #     textcoords = 'offset points',
+        #     arrowprops = dict(arrowstyle = "->",
+        #     connectionstyle = "arc, angleA = 0,armA = 30,rad = 50"),
+        #     # dibujar tabla dentro del gráfico
+        #     valores = [[format(np.max(xmax),".2f"), format(np.min(ymax),".2f")]],
+        #     etiquetas = ["xmax (m)", "ymax (m)"])
+        etiquetas = ["xmax (m)", "ymax (m)"]
+        valores = [[format(np.max(xmax),".2f"), format(np.min(ymax),".2f")]],
+        plot.table(cellText=valores, colLabels = etiquetas, colWidths = [0.15]*len(ecuationTray(a,b,x)),loc='upper right')
+        # guarda la gráfica con 300dpi (puntos por pulgada)en python34-ejemplos curso python
+        # plot.savefig("figura_Lanzamiento Proyectiles_1.pdf", dpi = 300)            
+        # mostramos en pantalla la gráfica
+        plot.show()
+
 def start(input):
     global countGen
     global lTop
@@ -247,6 +308,7 @@ def start(input):
     else: 
         print('------------------ Mejores Resultados ------------------')
         printList(lTop)
+        graphParabolic(lTop)
 
 def validModelation(input):
     try:
