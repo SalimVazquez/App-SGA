@@ -212,7 +212,7 @@ def evaluation(inp):
                 EleMax = lSelection[i]['Ele']
             if minFitness < lSelection[i]['Fitness']:
                 minFitness = lSelection[i]['Fitness']
-    dictTop = {'Gen #': countGen+1, 'Mejor': maxFitness, 'Peor': minFitness, 'Promedio': (totFitness/len(lSelection))}
+    dictTop = {'Gen #': countGen+1, 'Vo': VoMax, 'Ele': EleMax, 'Mejor': maxFitness, 'Peor': minFitness, 'Promedio': (totFitness/len(lSelection))}
     lTop.append(dictTop)
     print('Sum fitness: ',totFitness)
     print('Prom fitness: ',(totFitness/len(lSelection)))
@@ -234,6 +234,7 @@ def initialize(inp):
 
 def start(input):
     global countGen
+    global lTop
     initialize(input)
     while countGen < 5:
         print('------------------ Selection #',countGen+1,' ------------------')
