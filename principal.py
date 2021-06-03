@@ -319,7 +319,7 @@ def validModelation(input):
     if input.isdigit():
         return True
     else:
-        messagebox.showerror('Error en modelación', 'Se esperaba un tipo de dato: Integer')
+        messagebox.showerror('Error en modelación', 'Revisar tipo de datos ingresados')
         return False
 
 def makeform(root, fields):
