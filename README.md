@@ -5,7 +5,7 @@ Tomando en cuenta la distancia del objeto al punto donde cae la bala. **determin
 Considerar que el tiro parabólico está afectado por ruido (viento)
 
 ### Criterio de aceptación (configuración cañon)
-- ~~Azimuth (Angulo horizontal)~~ Descarte por plano 2D
+- [Azimuth (Orientación del cañon)]((https://www.photopills.com/es/articulos/entendiendo-el-azimut-la-elevacion))
 - [Elevación (Angulo vertical)](https://www.photopills.com/es/articulos/entendiendo-el-azimut-la-elevacion)
 - Velocidad inicial (Vo)
 
