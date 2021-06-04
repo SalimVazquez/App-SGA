@@ -47,8 +47,10 @@ def rangeProjectils(Vo, tetha):
     vMax = (math.pow(Vo,2) * math.sin((2*tetha)) / grav)
     return vMax
 
-def calculateFitness(Xmax, Xobj):
-    fitness = abs(Xobj - Xmax)
+# distance between 2 points
+def calculateFitness(X2, Y2, X1, Y1):
+    # sqrt((x2 - x1)^2 + (y2 - y1)^2)
+    fitness = math.sqrt(math.pow((X2-X1),2) + math.pow((Y2-Y1), 2))
     return fitness
 
 def poda(ite):
@@ -186,7 +188,7 @@ def evaluation(inp):
         lSelection[i]['vMax'] = round(rangeProjectils(lSelection[i]['Vo'], lSelection[i]['Ele']), 2)
         lSelection[i]['AzX'] = round(polarToCartesianX(lSelection[i]['vMax'], lSelection[i]['Ele']),2)
         lSelection[i]['AzY'] = round(polarToCartesianY(lSelection[i]['vMax'], lSelection[i]['Ele']),2)
-        lSelection[i]['Fitness'] = calculateFitness(lSelection[i]['Xmax'], float(inp['Posición objetivo X'].get()))
+        lSelection[i]['Fitness'] = calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lSelection[i]['AzX'], lSelection[i]['AzY'])
     for i in range(len(lSelection)):
         totFitness += lSelection[i]['Fitness']
     for i in range(len(lSelection)):
