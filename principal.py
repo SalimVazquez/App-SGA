@@ -160,9 +160,9 @@ def selection():
     for i in range(len(lSelection)):
         if lSelection[i]['Count'] != 0:
             for j in range(lSelection[i]['Count']):
-                dictCross = {'ID':position+1, 'Vo': lSelection[i]['Vo'], 'Ele': lSelection[i]['Ele'], 'VoC': 0, 'EleC': 0, 'Fitness': 0}
+                dictCross = {'ID':position+1, 'Vo': lSelection[i]['Vo'], 'Ele': lSelection[i]['Ele'], 'VoC': 0, 'EleC': 0, 'AzXC': 0, 'AzYC': 0, 'Fitness': 0}
                 lCross.append(dictCross)
-                dictGen = {'ID': position+1, 'VoP': lSelection[i]['Vo'], 'EleP': lSelection[i]['Ele'], 'fitnessP': lSelection[i]['Fitness'], 'VoH': 0, 'EleH': 0, 'fitnessH': 0, 'VoM': 0, 'EleM': 0, 'fitnessM': 0}
+                dictGen = {'ID': position+1, 'VoP': lSelection[i]['Vo'], 'EleP': lSelection[i]['Ele'], 'fitnessP': lSelection[i]['Fitness'], 'VoH': 0, 'EleH': 0, 'AzXC': 0, 'AzYC': 0, 'fitnessH': 0, 'VoM': 0, 'EleM': 0, 'AzXM': 0, 'AzYM': 0, 'fitnessM': 0}
                 lGen.append(dictGen)
                 position += 1
 
