@@ -158,14 +158,14 @@ def selection():
 
 def getFitnessMaxSelec():
     global lSelection
-    mejor = 0
+    best = 0
     position = 0
     for i in range(len(lSelection)):
         if i == 0:
-            mejor = lSelection[i]['Fitness']
+            best = lSelection[i]['Fitness']
         else:
-            if mejor > lSelection[i]['Fitness']:
-                mejor = lSelection[i]['Fitness']
+            if best > lSelection[i]['Fitness']:
+                best = lSelection[i]['Fitness']
                 position = i
     return position
 
@@ -218,24 +218,28 @@ def evaluation(inp):
     printList(lSelection)
     for i in range(len(lSelection)):
         if i == 0:
-            maxFitness = lSelection[0]['Fitness']
+            bestFitness = lSelection[0]['Fitness']
             VoMax = lSelection[0]['Vo']
             EleMax = lSelection[0]['Ele']
-            minFitness = lSelection[0]['Fitness']
+            AzX = lSelection[0]['AzX']
+            AzY = lSelection[0]['AzY']
+            worstFitness = lSelection[0]['Fitness']
         else:
             # Minimizando
             # Invertir operadores en if's si desea maximizar
-            if maxFitness > lSelection[i]['Fitness']:
-                maxFitness = lSelection[i]['Fitness']
+            if bestFitness > lSelection[i]['Fitness']:
+                bestFitness = lSelection[i]['Fitness']
                 VoMax = lSelection[i]['Vo']
                 EleMax = lSelection[i]['Ele']
-            if minFitness < lSelection[i]['Fitness']:
-                minFitness = lSelection[i]['Fitness']
-    dictTop = {'Gen #': countGen+1, 'Vo': VoMax, 'Ele': EleMax, 'Mejor': maxFitness, 'Peor': minFitness, 'Promedio': (totFitness/len(lSelection))}
+                AzX = lSelection[i]['AzX']
+                AzY = lSelection[i]['AzY']
+            if worstFitness < lSelection[i]['Fitness']:
+                worstFitness = lSelection[i]['Fitness']
+    dictTop = {'Gen #': countGen+1, 'Vo': VoMax, 'Ele': EleMax, 'AzX': AzX, 'AzY': AzY, 'Best': bestFitness, 'Worst': worstFitness, 'Prom': (totFitness/len(lSelection))}
     lTop.append(dictTop)
     print('Sum fitness: ',totFitness)
     print('Prom fitness: ',(totFitness/len(lSelection)))
-    print('Generation: ', countGen+1,' Vo: ', VoMax,' Ele:', EleMax, ' maxFitness: ', maxFitness, ' minFitness: ', minFitness)
+    print('Generation: ', countGen+1,' Vo: ', VoMax,' Ele:', EleMax, ' AzX:', AzX, ' AzY:', AzY, ' betterFitness: ', bestFitness, ' worstFitness: ', worstFitness)
     selection()
 
 def createIndividues(pobIni):
