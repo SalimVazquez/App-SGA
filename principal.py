@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plot
 import random
 import math
+import scipy.stats as ss
 
 root = Tk()
 lSelection = []
