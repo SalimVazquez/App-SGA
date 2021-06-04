@@ -184,8 +184,8 @@ def evaluation(inp):
     promFitness = 0
     for i in range(len(lSelection)):
         lSelection[i]['vMax'] = round(rangeProjectils(lSelection[i]['Vo'], lSelection[i]['Ele']), 2)
-        lSelection[i]['AzX'] = round(polarToCartesianX(vMax, lSelection[i]['Ele']),2)
-        lSelection[i]['AzY'] = round(polarToCartesianY(vMax, lSelection[i]['Ele']),2)
+        lSelection[i]['AzX'] = round(polarToCartesianX(lSelection[i]['vMax'], lSelection[i]['Ele']),2)
+        lSelection[i]['AzY'] = round(polarToCartesianY(lSelection[i]['vMax'], lSelection[i]['Ele']),2)
         lSelection[i]['Fitness'] = calculateFitness(lSelection[i]['Xmax'], float(inp['Posición objetivo X'].get()))
     for i in range(len(lSelection)):
         totFitness += lSelection[i]['Fitness']
@@ -318,18 +318,19 @@ def start(input):
     global countGen
     global lTop
     initialize(input)
-    while countGen < 5:
-        print('------------------ Selection #',countGen+1,' ------------------')
-        evaluation(input)
-        print('------------------ Cross #',countGen+1,' ------------------')
-        cross(input)
-        print('------------------ Mutation #',countGen+1,' ------------------')
-        mutation(input)
-        countGen += 1
-    else: 
-        print('------------------ Mejores Resultados ------------------')
-        printList(lTop)
-        graphParabolic(lTop)
+    evaluation(input)
+    # while countGen < 5:
+    #     print('------------------ Selection #',countGen+1,' ------------------')
+    #     evaluation(input)
+    #     print('------------------ Cross #',countGen+1,' ------------------')
+    #     cross(input)
+    #     print('------------------ Mutation #',countGen+1,' ------------------')
+    #     mutation(input)
+    #     countGen += 1
+    # else: 
+    #     print('------------------ Mejores Resultados ------------------')
+    #     printList(lTop)
+    #     graphParabolic(lTop)
 
 def validModelation(input):
     try:
