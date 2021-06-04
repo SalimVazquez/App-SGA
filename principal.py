@@ -49,8 +49,17 @@ def rangeProjectils(Vo, tetha):
 
 # distance between 2 points
 def calculateFitness(X2, Y2, X1, Y1):
+    # global rangobj
     # sqrt((x2 - x1)^2 + (y2 - y1)^2)
     fitness = math.sqrt(math.pow((X2-X1),2) + math.pow((Y2-Y1), 2))
+    # noise affecting the shot
+    # Normal distribution
+    # Sr = rangobj*0.1
+    # X = ss.norm(0,Sr)
+    # y = random.uniform((-3*Sr), (3*Sr)) # entre -3Sr,+3Sr
+    # noise = X.ppf(y)
+    noise = 0
+    fitness = fitness - noise
     return fitness
 
 def poda(ite):
