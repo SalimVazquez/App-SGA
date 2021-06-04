@@ -131,23 +131,27 @@ def mutation(inp):
     poda(2)
 
 def cross(inp):
+    # h = a*p1 + (1-a) * p2
     global lCross
     global lMutation
     position = 0
     for i in range(0, len(lCross), 2):
         auxVo1 = lCross[i]['Vo']
         auxVo2 = lCross[i+1]['Vo']
-        lCross[i]['VoC'] = auxVo2
-        lCross[i+1]['VoC'] = auxVo1
-        # auxTetha1 = lCross[i]['Ele']
-        # auxTetha2 = lCross[i+1]['Ele']
-        lCross[i]['EleC'] = lCross[i]['Ele']
-        lCross[i+1]['EleC'] = lCross[i+1]['Ele']
-    
+        aVo = random.uniform(0,1)
+        lCross[i]['VoC'] = aVo*auxVo1 + (1-aVo) * auxVo2
+        lCross[i+1]['VoC'] = aVo*auxVo2 + (1-aVo) * auxVo1
+        auxTetha1 = lCross[i]['Ele']
+        auxTetha2 = lCross[i+1]['Ele']
+        aEle = random.uniform(0,1)
+        lCross[i]['EleC'] = aEle*auxTetha1 + (1-aEle) * auxTetha2
+        lCross[i+1]['EleC'] = aEle*auxTetha2 + (1-aEle) * auxTetha1
     for i in range(len(lCross)):
-        auxMax = calculateXMax(random.randint(1,100), random.uniform(0,90))
-        lCross[i]['Fitness'] = calculateFitness(auxMax, float(inp['Posición objetivo X'].get()))
-        dictMut = {'ID': position+1, 'VoC': lCross[i]['VoC'], 'EleC': lCross[i]['EleC'], 'VoR':  0, 'EleR': 0, 'Fitness': 0}
+        lCross[i]['vMaxC'] = round(rangeProjectils(lCross[i]['VoC'], lCross[i]['EleC']), 2)
+        lCross[i]['AzXC'] = round(polarToCartesianX(lCross[i]['vMaxC'], lCross[i]['EleC']),2)
+        lCross[i]['AzYC'] = round(polarToCartesianY(lCross[i]['vMaxC'], lCross[i]['EleC']),2)
+        lCross[i]['Fitness'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lCross[i]['AzXC'], lCross[i]['AzYC']),4)
+        dictMut = {'ID': position+1, 'VoC': lCross[i]['VoC'], 'EleC': lCross[i]['EleC'], 'VoR':  0, 'EleR': 0, 'vMaxR': 0, 'AzXR': 0, 'AzYR': 0, 'Fitness': 0}
         lMutation.append(dictMut)
         position += 1
     printList(lCross)
@@ -160,9 +164,9 @@ def selection():
     for i in range(len(lSelection)):
         if lSelection[i]['Count'] != 0:
             for j in range(lSelection[i]['Count']):
-                dictCross = {'ID':position+1, 'Vo': lSelection[i]['Vo'], 'Ele': lSelection[i]['Ele'], 'VoC': 0, 'EleC': 0, 'AzXC': 0, 'AzYC': 0, 'Fitness': 0}
+                dictCross = {'ID':position+1, 'Vo': lSelection[i]['Vo'], 'Ele': lSelection[i]['Ele'], 'VoC': 0, 'EleC': 0, 'vMaxC': 0, 'AzXC': 0, 'AzYC': 0, 'Fitness': 0}
                 lCross.append(dictCross)
-                dictGen = {'ID': position+1, 'VoP': lSelection[i]['Vo'], 'EleP': lSelection[i]['Ele'], 'fitnessP': lSelection[i]['Fitness'], 'VoH': 0, 'EleH': 0, 'AzXC': 0, 'AzYC': 0, 'fitnessH': 0, 'VoM': 0, 'EleM': 0, 'AzXM': 0, 'AzYM': 0, 'fitnessM': 0}
+                dictGen = {'ID': position+1, 'VoP': lSelection[i]['Vo'], 'EleP': lSelection[i]['Ele'], 'fitnessP': lSelection[i]['Fitness'], 'VoH': 0, 'EleH': 0, 'fitnessH': 0, 'VoM': 0, 'EleM': 0, 'AzXM': 0, 'AzYM': 0, 'fitnessM': 0}
                 lGen.append(dictGen)
                 position += 1
 
@@ -198,7 +202,7 @@ def evaluation(inp):
         lSelection[i]['vMax'] = round(rangeProjectils(lSelection[i]['Vo'], lSelection[i]['Ele']), 2)
         lSelection[i]['AzX'] = round(polarToCartesianX(lSelection[i]['vMax'], lSelection[i]['Ele']),2)
         lSelection[i]['AzY'] = round(polarToCartesianY(lSelection[i]['vMax'], lSelection[i]['Ele']),2)
-        lSelection[i]['Fitness'] = calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lSelection[i]['AzX'], lSelection[i]['AzY'])
+        lSelection[i]['Fitness'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lSelection[i]['AzX'], lSelection[i]['AzY']),4)
     for i in range(len(lSelection)):
         totFitness += lSelection[i]['Fitness']
     for i in range(len(lSelection)):
@@ -335,6 +339,7 @@ def start(input):
     global lTop
     initialize(input)
     evaluation(input)
+    cross(input)
     # while countGen < 5:
     #     print('------------------ Selection #',countGen+1,' ------------------')
     #     evaluation(input)
