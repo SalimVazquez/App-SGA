@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plot
 import random
 import math
-import scipy.stats as ss
+# import scipy.stats as ss
 
 root = Tk()
 lSelection = []
@@ -88,11 +88,11 @@ def cleanLists():
     global lSelection
     global lCross
     global lMutation
-    global contPob
+    global countPob
     lSelection.clear()
     lCross.clear()
     lMutation.clear()
-    contPob = 0
+    countPob = 0
 
 def mutation(inp):
     global lMutation
@@ -235,8 +235,8 @@ def evaluation(inp):
             AzY = lSelection[0]['AzY']
             worstFitness = lSelection[0]['Fitness']
         else:
-            # Minimizando
-            # Invertir operadores en if's si desea maximizar
+            # Minimizing
+            # Invert operators in if's if you want to maximize
             if bestFitness > lSelection[i]['Fitness']:
                 bestFitness = lSelection[i]['Fitness']
                 VoMax = lSelection[i]['Vo']
