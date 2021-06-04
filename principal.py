@@ -24,8 +24,6 @@ fields = (
     'Posición objetivo X', 
     'Posición objetivo Y',
     'Velocidad del viento',
-    'Prob de mutación de bits',
-    'Prob de mutación de individuo'
 )
 
 def printList(list):
@@ -95,26 +93,22 @@ def cleanLists():
     countPob = 0
 
 def mutation(inp):
+    # h = h1 + y*R
+	# 		- y: numero aleatorio entre (-1,1)
+	# 		- R: rango/2
     global lMutation
     global lGen
-    Pmi = float(inp['Prob de mutación de individuo'].get())
-    Pmb = float(inp['Prob de mutación de bits'].get())
-    Pm = (Pmi/100) * (Pmb/100)
+    global rangobj
     for i in range(len(lMutation)):
-        randomGen = (random.randint(1,100)/100)
-        alter = random.randint(-5,5)
-        if randomGen < Pm and (i+1) % 2 == 0:
-            lMutation[i]['VoR'] = lMutation[i]['VoC'] + alter
-            lMutation[i]['EleR'] = lMutation[i]['EleC']
-        elif randomGen < Pm and (i+1) % 2 != 0:
-            lMutation[i]['VoR'] = lMutation[i]['VoC']
-            lMutation[i]['EleR'] = lMutation[i]['EleC'] + alter
-        else:
-            lMutation[i]['VoR'] = lMutation[i]['VoC']
-            lMutation[i]['EleR'] = lMutation[i]['EleC']
+        yVo = random.uniform(-1,1)
+        lMutation[i]['VoR'] = lMutation[i]['VoC'] + yVo * (rangobj/2)
+        yTetha = random.uniform(-1,1)
+        lMutation[i]['EleR'] = lMutation[i]['EleC'] + yTetha * (rangobj/2)
     for i in range(len(lMutation)):
-        auxMax = calculateXMax(random.randint(1,100), random.uniform(0,90))
-        lMutation[i]['Fitness'] = calculateFitness(auxMax, float(inp['Posición objetivo X'].get()))
+        lMutation[i]['vMaxR'] = round(rangeProjectils(lMutation[i]['VoR'], lMutation[i]['EleR']),2)
+        lMutation[i]['AzXR'] = round(polarToCartesianX(lMutation[i]['xMaxR'], lMutation[i]['EleR']),2)
+        lMutation[i]['AzYR'] = round(polarToCartesianY(lMutation[i]['xMaxR'], lMutation[i]['EleR']),2)
+        lMutation[i]['Fitness'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lMutation[i]['AzXR'], lMutation[i]['AzYR']),4)
         lGen[i]['VoH'] = lMutation[i]['VoR']
         lGen[i]['EleH'] = lMutation[i]['EleR']
         lGen[i]['fitnessH'] = lMutation[i]['Fitness']
@@ -127,11 +121,12 @@ def mutation(inp):
             lGen[i]['EleM'] = lGen[i]['EleP']
             lGen[i]['fitnessM'] = lGen[i]['fitnessP']
     printList(lMutation)
-    cleanLists()
-    poda(2)
+    # cleanLists()
+    # poda(2)
 
 def cross(inp):
     # h = a*p1 + (1-a) * p2
+    #       - a: numero aleatorio entre (0,1)
     global lCross
     global lMutation
     position = 0
@@ -166,7 +161,7 @@ def selection():
             for j in range(lSelection[i]['Count']):
                 dictCross = {'ID':position+1, 'Vo': lSelection[i]['Vo'], 'Ele': lSelection[i]['Ele'], 'VoC': 0, 'EleC': 0, 'vMaxC': 0, 'AzXC': 0, 'AzYC': 0, 'Fitness': 0}
                 lCross.append(dictCross)
-                dictGen = {'ID': position+1, 'VoP': lSelection[i]['Vo'], 'EleP': lSelection[i]['Ele'], 'fitnessP': lSelection[i]['Fitness'], 'VoH': 0, 'EleH': 0, 'fitnessH': 0, 'VoM': 0, 'EleM': 0, 'AzXM': 0, 'AzYM': 0, 'fitnessM': 0}
+                dictGen = {'ID': position+1, 'VoP': lSelection[i]['Vo'], 'EleP': lSelection[i]['Ele'], 'fitnessP': lSelection[i]['Fitness'], 'VoH': 0, 'EleH': 0, 'fitnessH': 0, 'VoM': 0, 'EleM': 0, 'fitnessM': 0}
                 lGen.append(dictGen)
                 position += 1
 
@@ -340,6 +335,7 @@ def start(input):
     initialize(input)
     evaluation(input)
     cross(input)
+    mutation(input)
     # while countGen < 5:
     #     print('------------------ Selection #',countGen+1,' ------------------')
     #     evaluation(input)
