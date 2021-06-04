@@ -15,6 +15,7 @@ lGen = []
 countPob = 0
 countGen = 0
 grav = 9.81
+rangobj = 0
 
 fields = (
     'Población inicial',
@@ -225,13 +226,19 @@ def createIndividues(pobIni):
     global countPob
     aux = []
     for i in range(pobIni):
-        dictPob = {'ID':i+1, 'Vo': random.randint(1,100), 'Ele': random.uniform(0,90), 'Xmax': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
+        dictPob = {'ID':i+1, 'Vo': random.randint(1,15), 'Ele': random.uniform(0,90), 'AzX': 0, 'AzY': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
         aux.append(dictPob)
         countPob += 1
     return aux
 
+def getRange(X, Y):
+    rang = math.sqrt(math.pow((X-0),2) + (math.pow((Y-0), 2)))
+    return rang
+
 def initialize(inp):
     global lSelection
+    rangobj = getRange(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()))
+    print('Rango:', rangobj)
     lSelection = createIndividues(int(inp['Población inicial'].get()))
 
 def ecuationTray(a,b,x):
