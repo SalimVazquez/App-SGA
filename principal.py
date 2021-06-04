@@ -158,14 +158,14 @@ def selection():
 
 def getFitnessMaxSelec():
     global lSelection
-    maximo = 0
+    mejor = 0
     position = 0
     for i in range(len(lSelection)):
         if i == 0:
-            maximo = lSelection[i]['Fitness']
+            mejor = lSelection[i]['Fitness']
         else:
-            if maximo > lSelection[i]['Fitness']:
-                maximo = lSelection[i]['Fitness']
+            if mejor > lSelection[i]['Fitness']:
+                mejor = lSelection[i]['Fitness']
                 position = i
     return position
 
