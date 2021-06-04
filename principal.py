@@ -31,9 +31,21 @@ def printList(list):
     for i in range(len(list)):
         print(list[i])
 
-def calculateXMax(Vo, tetha):
-    Xmax = ((math.pow(Vo,2) * math.sin(2*tetha))/grav)
-    return abs(Xmax)
+# convert polar coordinates to cartesians
+def polarToCartesianX(vMax, tetha):
+    x = vMax * math.cos(tetha)
+    return x
+
+def polarToCartesianY(vMax, tetha):
+    y = vMax * math.sin(tetha)
+    return y
+
+# The horizontal range of each of the projectiles
+def rangeProjectils(Vo, tetha):
+    global grav
+    # Vo² * sin(θ) / g
+    vMax = (math.pow(Vo,2) * math.sin((2*tetha)) / grav)
+    return vMax
 
 def calculateFitness(Xmax, Xobj):
     fitness = abs(Xobj - Xmax)
@@ -171,7 +183,9 @@ def evaluation(inp):
     totFitness = 0
     promFitness = 0
     for i in range(len(lSelection)):
-        lSelection[i]['Xmax'] = calculateXMax(lSelection[i]['Vo'], lSelection[i]['Ele'])
+        lSelection[i]['vMax'] = round(rangeProjectils(lSelection[i]['Vo'], lSelection[i]['Ele']), 2)
+        lSelection[i]['AzX'] = round(polarToCartesianX(vMax, lSelection[i]['Ele']),2)
+        lSelection[i]['AzY'] = round(polarToCartesianY(vMax, lSelection[i]['Ele']),2)
         lSelection[i]['Fitness'] = calculateFitness(lSelection[i]['Xmax'], float(inp['Posición objetivo X'].get()))
     for i in range(len(lSelection)):
         totFitness += lSelection[i]['Fitness']
@@ -226,7 +240,7 @@ def createIndividues(pobIni):
     global countPob
     aux = []
     for i in range(pobIni):
-        dictPob = {'ID':i+1, 'Vo': random.randint(1,15), 'Ele': random.uniform(0,90), 'AzX': 0, 'AzY': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
+        dictPob = {'ID':i+1, 'Vo': round(random.randint(1,15),2), 'Ele': round(random.uniform(0,90),2), 'vMax': 0, 'AzX': 0, 'AzY': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
         aux.append(dictPob)
         countPob += 1
     return aux
