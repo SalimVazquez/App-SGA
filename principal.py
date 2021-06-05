@@ -125,7 +125,7 @@ def mutation(inp):
             lGen[i]['AzB'] = lGen[i]['AzP']
             lGen[i]['fitB'] = lGen[i]['fitP']
     printList(lMutation)
-    # cleanLists()
+    cleanLists()
     # poda(2)
 
 def cross(inp):
