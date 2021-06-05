@@ -69,14 +69,14 @@ def poda(ite):
     auxGen = sorted(auxGen, key=lambda x: x['fitnessM'])
     lSelection.clear()
     for i in range(ite):
-        if auxGen[i]['fitnessP'] < auxGen[i]['fitnessH']:
-            dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoP'], 'Ele': auxGen[i]['EleP'], 'Xmax': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
+        if auxGen[i]['fitP'] < auxGen[i]['fitH']:
+            dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoP'], 'Ele': auxGen[i]['EleP'], 'Az': auxGen[i]['AzP'], 'R': 0, 'X': 0, 'Y': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
         else:
-            dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoH'], 'Ele': auxGen[i]['EleH'], 'Xmax': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
+            dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoH'], 'Ele': auxGen[i]['EleH'], 'Az': auxGen[i]['AzH'], 'R': 0, 'X': 0, 'Y': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
         lSelection.append(dictSel)
         countPob += 1
     for i in range(2, len(auxGen)):
-        dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoH'], 'Ele': auxGen[i]['EleH'], 'Xmax': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
+        dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoH'], 'Ele': auxGen[i]['EleH'], 'Az': auxGen[i]['AzH'], 'R': 0, 'X': 0, 'Y': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
         lSelection.append(dictSel)
     print('------------------ Poda ------------------')
     printList(lGen)
@@ -126,7 +126,7 @@ def mutation(inp):
             lGen[i]['fitB'] = lGen[i]['fitP']
     printList(lMutation)
     cleanLists()
-    # poda(2)
+    poda(2)
 
 def cross(inp):
     # h = a*p1 + (1-a) * p2
