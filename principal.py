@@ -194,10 +194,10 @@ def evaluation(inp):
     totFitness = 0
     promFitness = 0
     for i in range(len(lSelection)):
-        lSelection[i]['vMax'] = round(rangeProjectils(lSelection[i]['Vo'], lSelection[i]['Ele']), 2)
-        lSelection[i]['AzX'] = round(polarToCartesianX(lSelection[i]['vMax'], lSelection[i]['Ele']),2)
-        lSelection[i]['AzY'] = round(polarToCartesianY(lSelection[i]['vMax'], lSelection[i]['Ele']),2)
-        lSelection[i]['Fitness'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lSelection[i]['AzX'], lSelection[i]['AzY']),4)
+        lSelection[i]['R'] = round(rangeProjectils(lSelection[i]['Vo'], lSelection[i]['Ele']), 2)
+        lSelection[i]['X'] = round(polarToCartesianX(lSelection[i]['R'], lSelection[i]['Az']),2)
+        lSelection[i]['Y'] = round(polarToCartesianY(lSelection[i]['R'], lSelection[i]['Az']),2)
+        lSelection[i]['Fitness'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lSelection[i]['X'], lSelection[i]['Y']),4)
     for i in range(len(lSelection)):
         totFitness += lSelection[i]['Fitness']
     for i in range(len(lSelection)):
@@ -230,8 +230,7 @@ def evaluation(inp):
             bestFitness = lSelection[0]['Fitness']
             VoMax = lSelection[0]['Vo']
             EleMax = lSelection[0]['Ele']
-            AzX = lSelection[0]['AzX']
-            AzY = lSelection[0]['AzY']
+            AzMax = lSelection[0]['Az']
             worstFitness = lSelection[0]['Fitness']
         else:
             # Minimizing
@@ -240,22 +239,21 @@ def evaluation(inp):
                 bestFitness = lSelection[i]['Fitness']
                 VoMax = lSelection[i]['Vo']
                 EleMax = lSelection[i]['Ele']
-                AzX = lSelection[i]['AzX']
-                AzY = lSelection[i]['AzY']
+                AzMax = lSelection[i]['Az']
             if worstFitness < lSelection[i]['Fitness']:
                 worstFitness = lSelection[i]['Fitness']
-    dictTop = {'Gen #': countGen+1, 'Vo': VoMax, 'Ele': EleMax, 'AzX': AzX, 'AzY': AzY, 'Best': bestFitness, 'Worst': worstFitness, 'Prom': (totFitness/len(lSelection))}
+    dictTop = {'Gen #': countGen+1, 'Vo': VoMax, 'Ele': EleMax, 'Az': AzMax, 'Best': bestFitness, 'Worst': worstFitness, 'Prom': (totFitness/len(lSelection))}
     lTop.append(dictTop)
     print('Sum fitness: ',totFitness)
     print('Prom fitness: ',(totFitness/len(lSelection)))
-    print('Generation: ', countGen+1,' Vo: ', VoMax,' Ele:', EleMax, ' AzX:', AzX, ' AzY:', AzY, ' betterFitness: ', bestFitness, ' worstFitness: ', worstFitness)
+    print('Generation: ', countGen+1,' Vo: ', VoMax,' Ele:', EleMax, ' Az:', AzMax, ' betterFitness: ', bestFitness, ' worstFitness: ', worstFitness)
     selection()
 
 def createIndividues(pobIni):
     global countPob
     aux = []
     for i in range(pobIni):
-        dictPob = {'ID':i+1, 'Vo': round(random.randint(1,15),2), 'Ele': round(random.uniform(0,90),2), 'vMax': 0, 'AzX': 0, 'AzY': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
+        dictPob = {'ID':i+1, 'Vo': round(random.randint(1,15),2), 'Ele': round(random.uniform(0,90),2), 'Az': round(random.uniform(0,360),2), 'R': 0, 'X': 0, 'Y': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
         aux.append(dictPob)
         countPob += 1
     return aux
