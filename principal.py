@@ -126,27 +126,32 @@ def mutation(inp):
 
 def cross(inp):
     # h = a*p1 + (1-a) * p2
-    #       - a: numero aleatorio entre (0,1)
+    #   - a: numero aleatorio entre (0,1)
     global lCross
     global lMutation
     position = 0
     for i in range(0, len(lCross), 2):
-        auxVo1 = lCross[i]['Vo']
-        auxVo2 = lCross[i+1]['Vo']
+        auxVo1 = lCross[i]['VoP']
+        auxVo2 = lCross[i+1]['VoP']
         aVo = random.uniform(0,1)
-        lCross[i]['VoC'] = aVo*auxVo1 + (1-aVo) * auxVo2
-        lCross[i+1]['VoC'] = aVo*auxVo2 + (1-aVo) * auxVo1
-        auxTetha1 = lCross[i]['Ele']
-        auxTetha2 = lCross[i+1]['Ele']
+        lCross[i]['Vo'] = aVo*auxVo1 + (1-aVo) * auxVo2
+        lCross[i+1]['Vo'] = aVo*auxVo2 + (1-aVo) * auxVo1
+        auxTetha1 = lCross[i]['EleP']
+        auxTetha2 = lCross[i+1]['EleP']
         aEle = random.uniform(0,1)
-        lCross[i]['EleC'] = aEle*auxTetha1 + (1-aEle) * auxTetha2
-        lCross[i+1]['EleC'] = aEle*auxTetha2 + (1-aEle) * auxTetha1
+        lCross[i]['Ele'] = aEle*auxTetha1 + (1-aEle) * auxTetha2
+        lCross[i+1]['Ele'] = aEle*auxTetha2 + (1-aEle) * auxTetha1
+        auxAz1 = lCross[i]['AzP']
+        auxAz2 = lCross[i+1]['AzP']
+        aZ = random.uniform(0,1)
+        lCross[i]['Az'] = aZ*auxAz1 + (1-aZ) * auxAz2
+        lCross[i+1]['Az'] = aZ*auxAz2 + (1-aZ) * auxAz1
     for i in range(len(lCross)):
-        lCross[i]['vMaxC'] = round(rangeProjectils(lCross[i]['VoC'], lCross[i]['EleC']), 2)
-        lCross[i]['AzXC'] = round(polarToCartesianX(lCross[i]['vMaxC'], lCross[i]['EleC']),2)
-        lCross[i]['AzYC'] = round(polarToCartesianY(lCross[i]['vMaxC'], lCross[i]['EleC']),2)
-        lCross[i]['Fitness'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lCross[i]['AzXC'], lCross[i]['AzYC']),4)
-        dictMut = {'ID': position+1, 'VoC': lCross[i]['VoC'], 'EleC': lCross[i]['EleC'], 'VoR':  0, 'EleR': 0, 'vMaxR': 0, 'AzXR': 0, 'AzYR': 0, 'Fitness': 0}
+        lCross[i]['R'] = round(rangeProjectils(lCross[i]['Vo'], lCross[i]['Ele']), 2)
+        lCross[i]['X'] = round(polarToCartesianX(lCross[i]['R'], lCross[i]['Az']),2)
+        lCross[i]['Y'] = round(polarToCartesianY(lCross[i]['R'], lCross[i]['Az']),2)
+        lCross[i]['Fit'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lCross[i]['X'], lCross[i]['Y']),4)
+        dictMut = {'ID': position+1, 'Vo': lCross[i]['Vo'], 'Ele': lCross[i]['Ele'], 'Az':  lCross[i]['Az'], 'VoH': 0, 'EleH': 0, 'AzH': 0, 'Rh': 0, 'Xh': 0, 'Yh': 0, 'FitH': 0}
         lMutation.append(dictMut)
         position += 1
     printList(lCross)
