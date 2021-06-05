@@ -101,11 +101,11 @@ def mutation(inp):
     global rangobj
     for i in range(len(lMutation)):
         yVo = random.uniform(-1,1)
-        lMutation[i]['VoH'] = lMutation[i]['Vo'] + yVo * (rangobj/2)
+        lMutation[i]['VoH'] = round(lMutation[i]['Vo'] + yVo * (rangobj/2),2)
         yTetha = random.uniform(-1,1)
-        lMutation[i]['EleH'] = lMutation[i]['Ele'] + yTetha * (rangobj/2)
+        lMutation[i]['EleH'] = round(lMutation[i]['Ele'] + yTetha * (rangobj/2),2)
         yAz = random.uniform(-1,1)
-        lMutation[i]['AzH'] = lMutation[i]['Az'] + yAz * (rangobj/2)
+        lMutation[i]['AzH'] = round(lMutation[i]['Az'] + yAz * (rangobj/2),2)
     for i in range(len(lMutation)):
         lMutation[i]['Rh'] = round(rangeProjectils(lMutation[i]['VoH'], lMutation[i]['EleH']),2)
         lMutation[i]['Xh'] = round(polarToCartesianX(lMutation[i]['Rh'], lMutation[i]['AzH']),2)
@@ -139,18 +139,18 @@ def cross(inp):
         auxVo1 = lCross[i]['VoP']
         auxVo2 = lCross[i+1]['VoP']
         aVo = random.uniform(0,1)
-        lCross[i]['Vo'] = aVo*auxVo1 + (1-aVo) * auxVo2
-        lCross[i+1]['Vo'] = aVo*auxVo2 + (1-aVo) * auxVo1
+        lCross[i]['Vo'] = round(aVo*auxVo1 + (1-aVo) * auxVo2,2)
+        lCross[i+1]['Vo'] = round(aVo*auxVo2 + (1-aVo) * auxVo1,2)
         auxTetha1 = lCross[i]['EleP']
         auxTetha2 = lCross[i+1]['EleP']
         aEle = random.uniform(0,1)
-        lCross[i]['Ele'] = aEle*auxTetha1 + (1-aEle) * auxTetha2
-        lCross[i+1]['Ele'] = aEle*auxTetha2 + (1-aEle) * auxTetha1
+        lCross[i]['Ele'] = round(aEle*auxTetha1 + (1-aEle) * auxTetha2,2)
+        lCross[i+1]['Ele'] = round(aEle*auxTetha2 + (1-aEle) * auxTetha1,2)
         auxAz1 = lCross[i]['AzP']
         auxAz2 = lCross[i+1]['AzP']
         aZ = random.uniform(0,1)
-        lCross[i]['Az'] = aZ*auxAz1 + (1-aZ) * auxAz2
-        lCross[i+1]['Az'] = aZ*auxAz2 + (1-aZ) * auxAz1
+        lCross[i]['Az'] = round(aZ*auxAz1 + (1-aZ) * auxAz2,2)
+        lCross[i+1]['Az'] = round(aZ*auxAz2 + (1-aZ) * auxAz1,2)
     for i in range(len(lCross)):
         lCross[i]['R'] = round(rangeProjectils(lCross[i]['Vo'], lCross[i]['Ele']), 2)
         lCross[i]['X'] = round(polarToCartesianX(lCross[i]['R'], lCross[i]['Az']),2)
@@ -211,7 +211,7 @@ def evaluation(inp):
     for i in range(len(lSelection)):
         totFitness += lSelection[i]['Fitness']
     for i in range(len(lSelection)):
-        lSelection[i]['Prob'] = lSelection[i]['Fitness'] / totFitness
+        lSelection[i]['Prob'] = round(lSelection[i]['Fitness'] / totFitness, 4)
     auxPob = int(inp['Población máxima'].get()) - int(inp['Población inicial'].get())
     randNumbers = np.random.rand(auxPob)
     for i in range(len(randNumbers)):
