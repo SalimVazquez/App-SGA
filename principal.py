@@ -66,7 +66,7 @@ def poda(ite):
     global lGen
     global countPob
     auxGen = lGen
-    auxGen = sorted(auxGen, key=lambda x: x['fitnessM'])
+    auxGen = sorted(auxGen, key=lambda x: x['fitB'])
     lSelection.clear()
     for i in range(ite):
         if auxGen[i]['fitP'] < auxGen[i]['fitH']:
@@ -113,6 +113,7 @@ def mutation(inp):
         lMutation[i]['FitH'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lMutation[i]['Xh'], lMutation[i]['Yh']),4)
         lGen[i]['VoH'] = lMutation[i]['VoH']
         lGen[i]['EleH'] = lMutation[i]['EleH']
+        lGen[i]['AzH'] = lMutation[i]['AzH']
         lGen[i]['fitH'] = lMutation[i]['FitH']
         if lGen[i]['fitH'] < lGen[i]['fitP']:
             lGen[i]['VoB'] = lGen[i]['VoH']
