@@ -275,7 +275,8 @@ def getRange(X, Y):
 def initialize(inp):
     global lSelection
     rangobj = getRange(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()))
-    print('Rango:', rangobj)
+    print('Obj\nX:',float(inp['Posición objetivo X'].get()), ' Y:',float(inp['Posición objetivo Y'].get()))
+    print('Rango a origen:', rangobj)
     lSelection = createIndividues(int(inp['Población inicial'].get()))
 
 def ecuationTray(a,b,x):
