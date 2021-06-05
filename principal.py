@@ -94,21 +94,23 @@ def cleanLists():
 
 def mutation(inp):
     # h = h1 + y*R
-	# 		- y: numero aleatorio entre (-1,1)
-	# 		- R: rango/2
+	# 	- y: numero aleatorio entre (-1,1)
+	# 	- R: rango/2
     global lMutation
     global lGen
     global rangobj
     for i in range(len(lMutation)):
         yVo = random.uniform(-1,1)
-        lMutation[i]['VoR'] = lMutation[i]['VoC'] + yVo * (rangobj/2)
+        lMutation[i]['VoH'] = lMutation[i]['Vo'] + yVo * (rangobj/2)
         yTetha = random.uniform(-1,1)
-        lMutation[i]['EleR'] = lMutation[i]['EleC'] + yTetha * (rangobj/2)
+        lMutation[i]['EleH'] = lMutation[i]['Ele'] + yTetha * (rangobj/2)
+        yAz = random.uniform(-1,1)
+        lMutation[i]['AzH'] = lMutation[i]['Az'] + yAz * (rangobj/2)
     for i in range(len(lMutation)):
-        lMutation[i]['vMaxR'] = round(rangeProjectils(lMutation[i]['VoR'], lMutation[i]['EleR']),2)
-        lMutation[i]['AzXR'] = round(polarToCartesianX(lMutation[i]['xMaxR'], lMutation[i]['EleR']),2)
-        lMutation[i]['AzYR'] = round(polarToCartesianY(lMutation[i]['xMaxR'], lMutation[i]['EleR']),2)
-        lMutation[i]['Fitness'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lMutation[i]['AzXR'], lMutation[i]['AzYR']),4)
+        lMutation[i]['Rh'] = round(rangeProjectils(lMutation[i]['VoH'], lMutation[i]['EleH']),2)
+        lMutation[i]['Xh'] = round(polarToCartesianX(lMutation[i]['Rh'], lMutation[i]['AzH']),2)
+        lMutation[i]['Yh'] = round(polarToCartesianY(lMutation[i]['Rh'], lMutation[i]['AzH']),2)
+        lMutation[i]['FitH'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lMutation[i]['Xh'], lMutation[i]['Yh']),4)
         lGen[i]['VoH'] = lMutation[i]['VoR']
         lGen[i]['EleH'] = lMutation[i]['EleR']
         lGen[i]['fitnessH'] = lMutation[i]['Fitness']
