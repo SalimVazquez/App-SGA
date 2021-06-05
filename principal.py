@@ -304,6 +304,34 @@ def graphEvolution(inp):
     plot.grid()
     plot.show()
 
+def graphParabolic(inp):
+    global lTop
+    global grav
+    dt = 0.01
+    ptsX = []
+    ptsY = []
+    for i in range(len(lTop)):
+        t = 0
+        x = 0
+        y = 0
+
+        vx = lTop[i]['Vo']*math.cos(math.radians(lTop[i]['Ele']))
+        vy = lTop[i]['Vo']*math.sin(math.radians(lTop[i]['Ele']))
+        ptsX.clear()
+        ptsY.clear()
+
+        while y>=-0.01:
+            t = t + dt
+            x = x+vx*t
+            y = y+vy*t-grav*t*t
+            ptsX.append(x)
+            ptsY.append(y)
+        plot.plot(ptsX,ptsY, label=str(lTop[i]['Ele']))
+    plot.title("Movimiento Parabólico")
+    plot.xlabel("Posición horizontal(m)")
+    plot.ylabel("Altura (m)")
+    plot.show()
+
 def start(input):
     global countGen
     global lTop
@@ -317,6 +345,7 @@ def start(input):
     print('------------------ Top ------------------')
     printList(lTop)
     graphEvolution(input)
+    graphParabolic(input)
     # while countGen < 5:
     #     print('------------------ Selection #',countGen+1,' ------------------')
     #     evaluation(input)
