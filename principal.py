@@ -263,7 +263,7 @@ def createIndividues(pobIni):
     global countPob
     aux = []
     for i in range(pobIni):
-        dictPob = {'ID':i+1, 'Vo': round(random.uniform(1,15),2), 'Ele': round(random.uniform(0,90),2), 'Az': round(random.uniform(0,360),2), 'R': 0, 'X': 0, 'Y': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
+        dictPob = {'ID':i+1, 'Vo': round(random.uniform(1,100),2), 'Ele': round(random.uniform(0,90),2), 'Az': round(random.uniform(0,360),2), 'R': 0, 'X': 0, 'Y': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
         aux.append(dictPob)
         countPob += 1
     return aux
