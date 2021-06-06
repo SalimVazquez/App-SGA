@@ -337,7 +337,8 @@ def evaluateFitness():
     global lSelection
     auxGen = lSelection
     auxGen = sorted(auxGen, key=lambda x: x['Fitness'])
-    return auxGen[0]['Fitness']
+    dictBetter = {'Vo': auxGen[0]['Vo'], 'Ele': auxGen[0]['Ele'], 'Az': auxGen[0]['Az'], 'Fit': auxGen[0]['Fitness']}
+    return dictBetter
 
 def start(input):
     global countGen
@@ -348,7 +349,8 @@ def start(input):
     while band > 0.6 and countGen < 150:
         print('------------------ Selection #',countGen+1,' ------------------')
         evaluation(input)
-        band = evaluateFitness()
+        aux = evaluateFitness()
+        band = aux.get("Fit")
         print('------------------ Cross #',countGen+1,' ------------------')
         cross(input)
         print('------------------ Mutation #',countGen+1,' ------------------')
@@ -359,7 +361,9 @@ def start(input):
         printList(lTop)
         graphEvolution(lTop)
         graphParabolic()
-        messagebox.showinfo('Mejor fitness de todas las generaciones', band)
+        aux = evaluateFitness()
+        info = 'Fitness', band, '  Vo: ',aux.get("Vo"), '  Ele:',aux.get("Ele"), '  Az:',aux.get("Az")
+        messagebox.showinfo('Mejor configuración', info)
 
 def validModelation(input):
     try:
