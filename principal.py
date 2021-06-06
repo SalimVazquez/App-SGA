@@ -98,14 +98,15 @@ def mutation(inp):
 	# 	- R: rango/2
     global lMutation
     global lGen
-    global rangobj
+    rangobj = getRange(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()))
+    R = rangobj/2
     for i in range(len(lMutation)):
         yVo = random.uniform(-1,1)
-        lMutation[i]['VoH'] = round(lMutation[i]['Vo'] + yVo * (rangobj/2),2)
+        lMutation[i]['VoH'] = round((lMutation[i]['Vo'] + (yVo * R)),2)
         yTetha = random.uniform(-1,1)
-        lMutation[i]['EleH'] = round(lMutation[i]['Ele'] + yTetha * (rangobj/2),2)
+        lMutation[i]['EleH'] = round((lMutation[i]['Ele'] + (yTetha * R)),2)
         yAz = random.uniform(-1,1)
-        lMutation[i]['AzH'] = round(lMutation[i]['Az'] + yAz * (rangobj/2),2)
+        lMutation[i]['AzH'] = round((lMutation[i]['Az'] + (yAz * R)),2)
     for i in range(len(lMutation)):
         lMutation[i]['Rh'] = round(rangeProjectils(lMutation[i]['VoH'], lMutation[i]['EleH']),2)
         lMutation[i]['Xh'] = round(polarToCartesianX(lMutation[i]['Rh'], lMutation[i]['AzH']),2)
