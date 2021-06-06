@@ -359,6 +359,7 @@ def start(input):
         printList(lTop)
         graphEvolution(lTop)
         graphParabolic()
+        messagebox.showinfo('Mejor fitness de todas las generaciones', band)
 
 def validModelation(input):
     try:
