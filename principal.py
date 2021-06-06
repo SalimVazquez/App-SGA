@@ -80,7 +80,6 @@ def poda(ite):
         lSelection.append(dictSel)
     print('------------------ Poda ------------------')
     printList(lGen)
-    lGen.clear()
 
 def cleanLists():
     global lSelection
@@ -334,17 +333,27 @@ def graphParabolic():
     plot.ylabel("Altura (m)")
     plot.show()
 
+def evaluateFitness():
+    global lGen
+    auxGen = lGen
+    auxGen = sorted(auxGen, key=lambda x: x['fitB'])
+    return auxGen[0]['fitB']
+
 def start(input):
     global countGen
     global lTop
+    global lGen
+    band = 1.0
     initialize(input)
-    while countGen < 5:
+    while band > 0.6 and countGen < 150:
+        lGen.clear()
         print('------------------ Selection #',countGen+1,' ------------------')
         evaluation(input)
         print('------------------ Cross #',countGen+1,' ------------------')
         cross(input)
         print('------------------ Mutation #',countGen+1,' ------------------')
         mutation(input)
+        band = evaluateFitness()
         countGen += 1
     else: 
         print('------------------ Mejores Resultados ------------------')
