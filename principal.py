@@ -298,7 +298,7 @@ def graphEvolution(inp):
     plot.plot(generations, maxs, 'b-x', linewidth=2, label="Mejores")
     plot.plot(generations, mins, 'r-o', linewidth=2, label="Peores")
     plot.plot(generations, proms, 'g-s', linewidth=2, label="Promedio")
-    plot.legend(loc='lower right')
+    plot.legend(loc='upper left')
     plot.xlabel('Generaciones')
     plot.ylabel('Fitness')
     plot.title("Evolución del Fitness")
@@ -327,7 +327,8 @@ def graphParabolic():
             y = y+vy*t-grav*t*t
             ptsX.append(x)
             ptsY.append(y)
-        plot.plot(ptsX,ptsY, label=str(lTop[i]['Ele']))
+        plot.plot(ptsX,ptsY, label="Gen" + str(lTop[i]['Gen #']))
+    plot.legend(loc='upper left')
     plot.title("Movimiento Parabólico")
     plot.xlabel("Posición horizontal(m)")
     plot.ylabel("Altura (m)")
