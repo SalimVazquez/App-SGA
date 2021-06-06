@@ -279,9 +279,6 @@ def initialize(inp):
     print('Rango a origen:', rangobj)
     lSelection = createIndividues(int(inp['Población inicial'].get()))
 
-def ecuationTray(a,b,x):
-    return(a*x-b*x**2)
-
 def graphEvolution(inp):
     global lTop
     maxs = []
@@ -310,13 +307,15 @@ def graphParabolic():
     dt = 0.01
     ptsX = []
     ptsY = []
-    for i in range(len(lTop)):
+    auxTop = lTop
+    auxTop = sorted(auxTop, key=lambda x: x['Gen #'], reverse=True)
+    for i in range(5):
         t = 0
         x = 0
         y = 0
 
-        vx = lTop[i]['Vo']*math.cos(math.radians(lTop[i]['Ele']))
-        vy = lTop[i]['Vo']*math.sin(math.radians(lTop[i]['Ele']))
+        vx = auxTop[i]['Vo']*math.cos(math.radians(auxTop[i]['Ele']))
+        vy = auxTop[i]['Vo']*math.sin(math.radians(auxTop[i]['Ele']))
         ptsX.clear()
         ptsY.clear()
 
@@ -326,7 +325,7 @@ def graphParabolic():
             y = y+vy*t-grav*t*t
             ptsX.append(x)
             ptsY.append(y)
-        plot.plot(ptsX,ptsY, label="Gen" + str(lTop[i]['Gen #']))
+        plot.plot(ptsX,ptsY, label="Gen" + str(auxTop[i]['Gen #']))
     plot.legend(loc='upper left')
     plot.title("Movimiento Parabólico")
     plot.xlabel("Posición horizontal(m)")
