@@ -42,7 +42,7 @@ def polarToCartesianY(vMax, tetha):
 # The horizontal range of each of the projectiles
 def rangeProjectils(Vo, tetha):
     global grav
-    # Vo² * sin(θ) / g
+    # Vo² * sin(2*θ) / g
     vMax = (math.pow(Vo,2) * math.sin(math.radians((2*tetha))) / grav)
     return vMax
 
@@ -75,7 +75,7 @@ def poda(ite):
             dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoH'], 'Ele': auxGen[i]['EleH'], 'Az': auxGen[i]['AzH'], 'R': 0, 'X': 0, 'Y': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
         lSelection.append(dictSel)
         countPob += 1
-    for i in range(2, len(auxGen)):
+    for i in range(ite, len(auxGen)):
         dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoH'], 'Ele': auxGen[i]['EleH'], 'Az': auxGen[i]['AzH'], 'R': 0, 'X': 0, 'Y': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
         lSelection.append(dictSel)
     print('------------------ Poda ------------------')
