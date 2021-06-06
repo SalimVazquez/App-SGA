@@ -304,7 +304,7 @@ def graphEvolution(inp):
     plot.grid()
     plot.show()
 
-def graphParabolic(inp):
+def graphParabolic():
     global lTop
     global grav
     dt = 0.01
@@ -336,28 +336,19 @@ def start(input):
     global countGen
     global lTop
     initialize(input)
-    print('------------------ Selection ------------------')
-    evaluation(input)
-    print('------------------ Cross ------------------')
-    cross(input)
-    print('------------------ Mutation ------------------')
-    mutation(input)
-    print('------------------ Top ------------------')
-    printList(lTop)
-    graphEvolution(input)
-    graphParabolic(input)
-    # while countGen < 5:
-    #     print('------------------ Selection #',countGen+1,' ------------------')
-    #     evaluation(input)
-    #     print('------------------ Cross #',countGen+1,' ------------------')
-    #     cross(input)
-    #     print('------------------ Mutation #',countGen+1,' ------------------')
-    #     mutation(input)
-    #     countGen += 1
-    # else: 
-    #     print('------------------ Mejores Resultados ------------------')
-    #     printList(lTop)
-    #     graphEvolution(lTop)
+    while countGen < 5:
+        print('------------------ Selection #',countGen+1,' ------------------')
+        evaluation(input)
+        print('------------------ Cross #',countGen+1,' ------------------')
+        cross(input)
+        print('------------------ Mutation #',countGen+1,' ------------------')
+        mutation(input)
+        countGen += 1
+    else: 
+        print('------------------ Mejores Resultados ------------------')
+        printList(lTop)
+        graphEvolution(lTop)
+        graphParabolic()
 
 def validModelation(input):
     try:
