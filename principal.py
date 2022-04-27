@@ -1,405 +1,212 @@
-import tkinter
-from tkinter import *
-from tkinter import messagebox
-import numpy as np
-import matplotlib.pyplot as plot
-import random
-import math
-# import scipy.stats as ss
+from Graficos import Grafico
+from Modelado import Modelo
+from Utils import Util
+from tkinter import Tk, Button, LEFT, YES
+from random import shuffle
+from math import sqrt, pow
 
-root = Tk()
-lSelection = []
-lCross = []
-lMutation = []
-lTop = []
-lGen = []
-countPob = 0
-countGen = 0
-grav = 9.81
-rangobj = 0
+# Globales
+CONTEO_POBLACION = 0
+HISTORIA_GENERACIONES = []
 
-fields = (
-    'Población inicial',
-    'Población máxima',
-    'Posición objetivo X', 
-    'Posición objetivo Y',
-    'Velocidad del viento',
-)
+def poda(sobrepoblacion, poblacion_inicial, poblacion_final):
+  """Funcion simulando la poda para una nueva generacion.
+  1. Juntamos la poblacion inicial con la población cruzada y mutada en un arreglo.
+  2. Ordenamos la poblacion final por aptitud de manera descendente.
+  3. Estimamos la sobrepoblacion y removemos de la poblacion a los menos aptos (peor fitness).
+  4. Actualizamos el conteo de población.
 
-def printList(list):
-    for i in range(len(list)):
-        print(list[i])
+  Args:
+    sobrepoblacion (int): Residuo entre la poblacion actual y la poblacion maxima.
+    poblacion_inicial (list): Población inicial de generación
+    poblacion_final (list): Población luego de cruzarse y mutar.
 
-# convert polar coordinates to cartesians
-def polarToCartesianX(vMax, tetha):
-    x = vMax * math.cos(math.radians(tetha))
-    return x
+  Returns:
+      list: Nueva población para siguiente generación
+  """
+  global CONTEO_POBLACION
+  poblacion_total = []
+  poblacion_total.extend(poblacion_inicial)
+  poblacion_total.extend(poblacion_final)
+  poblacion_total = Util.ordenar_poblacion_por_fitness(poblacion_total, False)
+  print(f"Soprepoblacion: {sobrepoblacion}") 
+  [ poblacion_total.pop() for i in range(sobrepoblacion) ]
+  CONTEO_POBLACION = len(poblacion_total)
+  Util.imprimir_lista('Poblacion podada', poblacion_total)
+  return poblacion_total
 
-def polarToCartesianY(vMax, tetha):
-    y = vMax * math.sin(math.radians(tetha))
-    return y
+def mutacion(modelado, poblacion):
+  """Funcion simulando la mutación de bits en un individuo.
+  1. Realizamos la mutación.
+  2. Guardamos información nueva de los individuos.
+  3. Actualizamos conteo de población
 
-# The horizontal range of each of the projectiles
-def rangeProjectils(Vo, tetha):
-    global grav
-    # Vo² * sin(2*θ) / g
-    vMax = (math.pow(Vo,2) * math.sin(math.radians((2*tetha))) / grav)
-    return vMax
+  Args:
+    modelado (class): Clase con el modelado del programa
+    poblacion (list): Población a mutar
 
-# distance between 2 points
-def calculateFitness(X2, Y2, X1, Y1):
-    # global rangobj
-    # sqrt((x2 - x1)^2 + (y2 - y1)^2)
-    fitness = math.sqrt(math.pow((X2-X1),2) + math.pow((Y2-Y1), 2))
-    # noise affecting the shot
-    # Normal distribution
-    # Sr = rangobj*0.1
-    # X = ss.norm(0,Sr)
-    # y = random.uniform((-3*Sr), (3*Sr)) # entre -3Sr,+3Sr
-    # noise = X.ppf(y)
-    noise = 0
-    fitness = fitness - noise
-    return fitness
+  Returns:
+    list:  Lista con la población después de mutar.
+  """
+  global CONTEO_POBLACION
+  poblacion_mutada = []
+  for iterador in range(len(poblacion)):
+    rango_objetivo_de_origen = (sqrt(pow((modelado.get_objetivo_x() - 0), 2) + pow((modelado.get_objetivo_y() - 0), 2)) / 2)
+    vo_mutado = Util.realizar_mutacion(poblacion[iterador]['Vo'], rango_objetivo_de_origen)
+    elevacion_mutado = Util.realizar_mutacion(poblacion[iterador]['Elevacion'], rango_objetivo_de_origen)
+    azimuth_mutado = Util.realizar_mutacion(poblacion[iterador]['Azimuth'], rango_objetivo_de_origen)
+    data_padre = {
+      'ID': poblacion[iterador]['ID'],
+      'Vo': vo_mutado,
+      'Elevacion': elevacion_mutado,
+      'Azimuth': azimuth_mutado
+    }
+    diccionario_mutacion = Util.inicializar_lista_mutacion(data_padre, iterador+1)
+    poblacion_mutada.append(diccionario_mutacion)
+    CONTEO_POBLACION += 1
+  poblacion_mutada = Util.completar_informacion_poblacion(poblacion_mutada, modelado)
+  Util.imprimir_lista('Poblacion mutada', poblacion_mutada)
+  return poblacion_mutada
 
-def poda(ite):
-    global lSelection
-    global lGen
-    global countPob
-    auxGen = lGen
-    auxGen = sorted(auxGen, key=lambda x: x['fitB'])
-    lSelection.clear()
-    for i in range(ite):
-        if auxGen[i]['fitP'] < auxGen[i]['fitH']:
-            dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoP'], 'Ele': auxGen[i]['EleP'], 'Az': auxGen[i]['AzP'], 'R': 0, 'X': 0, 'Y': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
-        else:
-            dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoH'], 'Ele': auxGen[i]['EleH'], 'Az': auxGen[i]['AzH'], 'R': 0, 'X': 0, 'Y': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
-        lSelection.append(dictSel)
-        countPob += 1
-    for i in range(ite, len(auxGen)):
-        dictSel = {'ID':i+1, 'Vo': auxGen[i]['VoH'], 'Ele': auxGen[i]['EleH'], 'Az': auxGen[i]['AzH'], 'R': 0, 'X': 0, 'Y': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
-        lSelection.append(dictSel)
-    print('------------------ Poda ------------------')
-    printList(lGen)
-    lGen.clear()
+def cruza(modelado, poblacion):
+  """Funcion simulando la cruza entre individuos.
+  1. Clonamos la lista de población.
+  2. Ordenamos aleatoriamente la lista shuffle().
+  3. Realizamos cruza entre parejas y por cada genetica del individuo.
+  4. Guardamos información nueva de los individuos.
 
-def cleanLists():
-    global lSelection
-    global lCross
-    global lMutation
-    global countPob
-    lSelection.clear()
-    lCross.clear()
-    lMutation.clear()
-    countPob = 0
+  Args:
+    modelado (class): Clase con el modelado del programa
+    poblacion (list): Población a cruzar
 
-def mutation(inp):
-    # h = h1 + y*R
-	# 	- y: numero aleatorio entre (-1,1)
-	# 	- R: rango/2
-    global lMutation
-    global lGen
-    rangobj = getRange(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()))
-    R = rangobj/2
-    for i in range(len(lMutation)):
-        yVo = random.uniform(-1,1)
-        lMutation[i]['VoH'] = round((lMutation[i]['Vo'] + (yVo * R)),2)
-        yTetha = random.uniform(-1,1)
-        lMutation[i]['EleH'] = round((lMutation[i]['Ele'] + (yTetha * R)),2)
-        yAz = random.uniform(-1,1)
-        lMutation[i]['AzH'] = round((lMutation[i]['Az'] + (yAz * R)),2)
-    for i in range(len(lMutation)):
-        lMutation[i]['Rh'] = round(rangeProjectils(lMutation[i]['VoH'], lMutation[i]['EleH']),2)
-        lMutation[i]['Xh'] = round(polarToCartesianX(lMutation[i]['Rh'], lMutation[i]['AzH']),2)
-        lMutation[i]['Yh'] = round(polarToCartesianY(lMutation[i]['Rh'], lMutation[i]['AzH']),2)
-        lMutation[i]['FitH'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lMutation[i]['Xh'], lMutation[i]['Yh']),4)
-        lGen[i]['VoH'] = lMutation[i]['VoH']
-        lGen[i]['EleH'] = lMutation[i]['EleH']
-        lGen[i]['AzH'] = lMutation[i]['AzH']
-        lGen[i]['fitH'] = lMutation[i]['FitH']
-        if lGen[i]['fitH'] < lGen[i]['fitP']:
-            lGen[i]['VoB'] = lGen[i]['VoH']
-            lGen[i]['EleB'] = lGen[i]['EleH']
-            lGen[i]['AzB'] = lGen[i]['AzH']
-            lGen[i]['fitB'] = lGen[i]['fitH']
-        else:
-            lGen[i]['VoB'] = lGen[i]['VoP']
-            lGen[i]['EleB'] = lGen[i]['EleP']
-            lGen[i]['AzB'] = lGen[i]['AzP']
-            lGen[i]['fitB'] = lGen[i]['fitP']
-    printList(lMutation)
-    cleanLists()
-    poda(2)
+  Returns:
+    list: Lista con la población después de cruzar entre parejas aleatoriamente
+  """
+  clon_poblacion = poblacion[:]
+  shuffle(clon_poblacion)
+  poblacion_cruzada = []
+  for i in range(0, len(clon_poblacion), 2):
+    vo_cruzada_uno, vo_cruzada_dos = Util.realizar_cruza(clon_poblacion[i]['Vo'], clon_poblacion[i+1]['Vo'])
+    elevacion_cruzada_uno, elevacion_cruzada_dos = Util.realizar_cruza(clon_poblacion[i]['Elevacion'], clon_poblacion[i+1]['Elevacion'])
+    azimuth_cruzada_uno, azimuth_cruzada_dos = Util.realizar_cruza(clon_poblacion[i]['Azimuth'], clon_poblacion[i+1]['Azimuth'])
+    padre_uno = {
+      'ID': clon_poblacion[i]['ID'],
+      'Vo': vo_cruzada_uno,
+      'Elevacion': elevacion_cruzada_uno,
+      'Azimuth': azimuth_cruzada_uno
+    }
+    padre_dos = {
+      'ID': clon_poblacion[i+1]['ID'],
+      'Vo': vo_cruzada_dos,
+      'Elevacion': elevacion_cruzada_dos,
+      'Azimuth': azimuth_cruzada_dos
+    }
+    diccionario_mutacion_uno, diccionario_mutacion_dos = Util.inicializar_lista_cruza(padre_uno, padre_dos)
+    poblacion_cruzada.append(diccionario_mutacion_uno)
+    poblacion_cruzada.append(diccionario_mutacion_dos)
+  poblacion_cruzada = Util.completar_informacion_poblacion(poblacion_cruzada, modelado)
+  Util.imprimir_lista('Poblacion cruzada', poblacion_cruzada)
+  return poblacion_cruzada
 
-def cross(inp):
-    # h = a*p1 + (1-a) * p2
-    #   - a: numero aleatorio entre (0,1)
-    global lCross
-    global lMutation
-    position = 0
-    for i in range(0, len(lCross), 2):
-        auxVo1 = lCross[i]['VoP']
-        auxVo2 = lCross[i+1]['VoP']
-        aVo = random.uniform(0,1)
-        lCross[i]['Vo'] = round(aVo*auxVo1 + (1-aVo) * auxVo2,2)
-        lCross[i+1]['Vo'] = round(aVo*auxVo2 + (1-aVo) * auxVo1,2)
-        auxTetha1 = lCross[i]['EleP']
-        auxTetha2 = lCross[i+1]['EleP']
-        aEle = random.uniform(0,1)
-        lCross[i]['Ele'] = round(aEle*auxTetha1 + (1-aEle) * auxTetha2,2)
-        lCross[i+1]['Ele'] = round(aEle*auxTetha2 + (1-aEle) * auxTetha1,2)
-        auxAz1 = lCross[i]['AzP']
-        auxAz2 = lCross[i+1]['AzP']
-        aZ = random.uniform(0,1)
-        lCross[i]['Az'] = round(aZ*auxAz1 + (1-aZ) * auxAz2,2)
-        lCross[i+1]['Az'] = round(aZ*auxAz2 + (1-aZ) * auxAz1,2)
-    for i in range(len(lCross)):
-        lCross[i]['R'] = round(rangeProjectils(lCross[i]['Vo'], lCross[i]['Ele']), 2)
-        lCross[i]['X'] = round(polarToCartesianX(lCross[i]['R'], lCross[i]['Az']),2)
-        lCross[i]['Y'] = round(polarToCartesianY(lCross[i]['R'], lCross[i]['Az']),2)
-        lCross[i]['Fit'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lCross[i]['X'], lCross[i]['Y']),4)
-        dictMut = {'ID': position+1, 'Vo': lCross[i]['Vo'], 'Ele': lCross[i]['Ele'], 'Az':  lCross[i]['Az'], 'VoH': 0, 'EleH': 0, 'AzH': 0, 'Rh': 0, 'Xh': 0, 'Yh': 0, 'FitH': 0}
-        lMutation.append(dictMut)
-        position += 1
-    printList(lCross)
+def competencia(generacion, poblacion, modelado):
+  """Funcion simulando la competencia entre individuos
+  1. Completamos la información de los individuos.
+  2. Recolectamos la información para la grafica.
 
-def selection():
-    global lSelection
-    global lCross
-    global lGen
-    position = 0
-    for i in range(len(lSelection)):
-        if lSelection[i]['Count'] != 0:
-            for j in range(lSelection[i]['Count']):
-                dictCross = {'ID':position+1, 'VoP': lSelection[i]['Vo'], 'EleP': lSelection[i]['Ele'], 'AzP': lSelection[i]['Az'], 'Vo': 0, 'Ele': 0, 'Az': 0, 'R': 0, 'X': 0, 'Y': 0, 'Fit': 0}
-                lCross.append(dictCross)
-                dictGen = {'ID': position+1, 'VoP': lSelection[i]['Vo'], 'EleP': lSelection[i]['Ele'], 'AzP': lSelection[i]['Az'], 'fitP': lSelection[i]['Fitness'], 'VoH': 0, 'EleH': 0, 'AzH': 0, 'fitH': 0, 'VoB': 0, 'EleB': 0, 'AzB': 0, 'fitB': 0}
-                lGen.append(dictGen)
-                position += 1
+  Args:
+    generacion (int): Generacion en la que va el programa
+    poblacion (list): Población por enviar a competencia
+    modelado (class): Clase con el modelado del programa
 
-def getFitnessMaxSelec():
-    global lSelection
-    best = 0
-    position = 0
-    for i in range(len(lSelection)):
-        if i == 0:
-            best = lSelection[i]['Fitness']
-        else:
-            if best > lSelection[i]['Fitness']:
-                best = lSelection[i]['Fitness']
-                position = i
-    return position
+  Returns:
+    list: Lista con información completa de los individuos a competir
+  """
+  global DELTA_X
+  global DELTA_Y
+  global HISTORIA_GENERACIONES
+  if poblacion[0]['Fitness'] == 0:
+    poblacion = Util.completar_informacion_poblacion(poblacion, modelado)
+  Util.imprimir_lista(f"Poblacion Gen: {generacion}", poblacion)
+  diccionario_generacion = Util.coleccionar_historial(generacion, poblacion)
+  HISTORIA_GENERACIONES.append(diccionario_generacion)
+  Util.imprimir_lista(f"Mejores Resultados", HISTORIA_GENERACIONES)
+  return poblacion
 
-def getProbAcu(limit):
-    global lSelection
-    a = 0
-    for i in range(0, limit, 1):
-        a += lSelection[i]['Prob']
-    return a
+def clonacion(poblacion):
+  global CONTEO_POBLACION
+  """Funcion simulando la clonacion del ultimo individuo si la población fuese impar
 
-def evaluation(inp):
-    global lSelection
-    global lTop
-    global countPob
-    global countGen
-    count = 0
-    totFitness = 0
-    promFitness = 0
-    for i in range(len(lSelection)):
-        lSelection[i]['R'] = round(rangeProjectils(lSelection[i]['Vo'], lSelection[i]['Ele']), 2)
-        lSelection[i]['X'] = round(polarToCartesianX(lSelection[i]['R'], lSelection[i]['Az']),2)
-        lSelection[i]['Y'] = round(polarToCartesianY(lSelection[i]['R'], lSelection[i]['Az']),2)
-        lSelection[i]['Fitness'] = round(calculateFitness(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()), lSelection[i]['X'], lSelection[i]['Y']),4)
-    for i in range(len(lSelection)):
-        totFitness += lSelection[i]['Fitness']
-    for i in range(len(lSelection)):
-        lSelection[i]['Prob'] = round(lSelection[i]['Fitness'] / totFitness, 4)
-    auxPob = int(inp['Población máxima'].get()) - int(inp['Población inicial'].get())
-    randNumbers = np.random.rand(auxPob)
-    for i in range(len(randNumbers)):
-        aux = []
-        for j in range(len(lSelection)):
-            if j == 0:
-                aux = [0, float(lSelection[j]['Prob'])]
-            else:
-                prob = getProbAcu(j)
-                aux = [float(prob), float((prob + lSelection[j]['Prob']))]
-            if randNumbers[i] >= aux[0] and randNumbers[i] <= aux[1] and count <= int(inp['Población inicial'].get()):
-                if count < (int(inp['Población inicial'].get())-1):
-                    # print('Se encontro',randNumbers[i], ' en aux:',aux,'\nPoblación act: ',countPob)
-                    lSelection[j]['Count'] += 1
-                    countPob += 1
-                    count += 1
-                    break
-                else:
-                    pos = getFitnessMaxSelec()
-                    lSelection[pos]['Count'] += 1
-                    countPob += 1
-                    count += 1
-    printList(lSelection)
-    for i in range(len(lSelection)):
-        if i == 0:
-            bestFitness = lSelection[0]['Fitness']
-            VoMax = lSelection[0]['Vo']
-            EleMax = lSelection[0]['Ele']
-            AzMax = lSelection[0]['Az']
-            worstFitness = lSelection[0]['Fitness']
-        else:
-            # Minimizing
-            # Invert operators in if's if you want to maximize
-            if bestFitness > lSelection[i]['Fitness']:
-                bestFitness = lSelection[i]['Fitness']
-                VoMax = lSelection[i]['Vo']
-                EleMax = lSelection[i]['Ele']
-                AzMax = lSelection[i]['Az']
-            if worstFitness < lSelection[i]['Fitness']:
-                worstFitness = lSelection[i]['Fitness']
-    dictTop = {'Gen #': countGen+1, 'Vo': VoMax, 'Ele': EleMax, 'Az': AzMax, 'Best': bestFitness, 'Worst': worstFitness, 'Prom': (totFitness/len(lSelection))}
-    lTop.append(dictTop)
-    print('Sum fitness: ',totFitness)
-    print('Prom fitness: ',(totFitness/len(lSelection)))
-    print('Generation: ', countGen+1,' Vo: ', VoMax,' Ele:', EleMax, ' Az:', AzMax, ' betterFitness: ', bestFitness, ' worstFitness: ', worstFitness)
-    selection()
+  Args:
+    poblacion (list): Lista de población
 
-def createIndividues(pobIni):
-    global countPob
-    aux = []
-    for i in range(pobIni):
-        dictPob = {'ID':i+1, 'Vo': round(random.uniform(1,100),2), 'Ele': round(random.uniform(0,90),2), 'Az': round(random.uniform(0,360),2), 'R': 0, 'X': 0, 'Y': 0, 'Fitness': 0, 'Prob': 0, 'Count': 0}
-        aux.append(dictPob)
-        countPob += 1
-    return aux
+  Returns:
+    list: Población modificada con un clon
+  """
+  poblacion.append(poblacion[-1])
+  CONTEO_POBLACION += 1
+  return poblacion
 
-def getRange(X, Y):
-    rang = math.sqrt(math.pow((X-0),2) + (math.pow((Y-0), 2)))
-    return rang
+def iniciar_algoritmo(modelado):
+  """Funcion para preparar y inicializar el algoritmo
 
-def initialize(inp):
-    global lSelection
-    rangobj = getRange(float(inp['Posición objetivo X'].get()), float(inp['Posición objetivo Y'].get()))
-    print('Obj\nX:',float(inp['Posición objetivo X'].get()), ' Y:',float(inp['Posición objetivo Y'].get()))
-    print('Rango a origen:', rangobj)
-    lSelection = createIndividues(int(inp['Población inicial'].get()))
+  Args:
+    modelado (class): Clase que almacena el modelado del algoritmo
 
-def graphEvolution(inp):
-    global lTop
-    maxs = []
-    mins = []
-    proms = []
-    generations = []
-    
-    for i in range(len(lTop)):
-        maxs.append(lTop[i]['Best'])
-        mins.append(lTop[i]['Worst'])
-        proms.append(lTop[i]['Prom'])
-        generations.append(i+1)
-    plot.plot(generations, maxs, 'b-x', linewidth=2, label="Mejores")
-    plot.plot(generations, mins, 'r-o', linewidth=2, label="Peores")
-    plot.plot(generations, proms, 'g-s', linewidth=2, label="Promedio")
-    plot.legend(loc='upper left')
-    plot.xlabel('Generaciones')
-    plot.ylabel('Fitness')
-    plot.title("Evolución del Fitness")
-    plot.grid()
-    plot.show()
+  Procesos:
+    - Definir cuantos bits se usaran
+    - Generar poblacion inicial
+    - Iteracion por generaciones
+    - Llamar a los procesos evolutivos (clonacion, competencia, cruza, mutacion, poda)
+    - Llamar a funcion de graficar
+  """
+  global DELTA_X
+  global DELTA_Y
+  global CONTEO_POBLACION
+  global HISTORIA_GENERACIONES
+  bandera = 1.0
+  contador_generaciones = 0
+  print('==== Starting ====')
+  poblacion, CONTEO_POBLACION = Util.inicializar(modelado.get_poblacion_inicial())
+  while bandera > 0.6 and contador_generaciones < 50:
+    if len(poblacion) % 2 != 0:
+      poblacion = clonacion(poblacion)
+    individuos_competencia = competencia(contador_generaciones, poblacion, modelado)
+    bandera = Util.obtener_fitness_minimo(individuos_competencia)
+    print(f"Bandera de impacto: {bandera}")
+    individuos_cruzados = cruza(modelado, individuos_competencia)
+    individuos_mutados = mutacion(modelado, individuos_cruzados)
+    if CONTEO_POBLACION > modelado.get_poblacion_maxima():
+      sobrepoblacion = CONTEO_POBLACION - modelado.get_poblacion_maxima()
+      poblacion = poda(sobrepoblacion, individuos_competencia, individuos_mutados)
+    contador_generaciones += 1
+  generaciones, maxs, mins, avgs = Util.split_informacion_grafica(HISTORIA_GENERACIONES)
+  Grafico.graficar_evolucion(generaciones, maxs, mins, avgs)
 
-def graphParabolic():
-    global lTop
-    global grav
-    dt = 0.01
-    ptsX = []
-    ptsY = []
-    auxTop = lTop
-    auxTop = sorted(auxTop, key=lambda x: x['Gen #'], reverse=True)
-    for i in range(5):
-        t = 0
-        x = 0
-        y = 0
+def cargar_configuracion(inputs):
+  """Funcion encargada de guardar el modelado del algoritmo
 
-        vx = auxTop[i]['Vo']*math.cos(math.radians(auxTop[i]['Ele']))
-        vy = auxTop[i]['Vo']*math.sin(math.radians(auxTop[i]['Ele']))
-        ptsX.clear()
-        ptsY.clear()
-
-        while y>=-0.01:
-            t = t + dt
-            x = x+vx*t
-            y = y+vy*t-grav*t*t
-            ptsX.append(x)
-            ptsY.append(y)
-        plot.plot(ptsX,ptsY, label="Gen" + str(auxTop[i]['Gen #']))
-    plot.legend(loc='upper left')
-    plot.title("Movimiento Parabólico")
-    plot.xlabel("Posición horizontal(m)")
-    plot.ylabel("Altura (m)")
-    plot.show()
-
-def evaluateFitness():
-    global lSelection
-    auxGen = lSelection
-    auxGen = sorted(auxGen, key=lambda x: x['Fitness'])
-    dictBetter = {'Vo': auxGen[0]['Vo'], 'Ele': auxGen[0]['Ele'], 'Az': auxGen[0]['Az'], 'Fit': auxGen[0]['Fitness']}
-    return dictBetter
-
-def start(input):
-    global countGen
-    global lTop
-    global lGen
-    band = 1.0
-    initialize(input)
-    while band > 0.6 and countGen < 150:
-        print('------------------ Selection #',countGen+1,' ------------------')
-        evaluation(input)
-        aux = evaluateFitness()
-        band = aux.get("Fit")
-        print('------------------ Cross #',countGen+1,' ------------------')
-        cross(input)
-        print('------------------ Mutation #',countGen+1,' ------------------')
-        mutation(input)
-        countGen += 1
-    else: 
-        print('------------------ Mejores Resultados ------------------')
-        printList(lTop)
-        graphEvolution(lTop)
-        graphParabolic()
-        aux = evaluateFitness()
-        info = 'Fitness', band, '  Vo: ',aux.get("Vo"), '  Ele:',aux.get("Ele"), '  Az:',aux.get("Az")
-        messagebox.showinfo('Mejor configuración', info)
-
-def validModelation(input):
-    try:
-        float(input)
-        return True
-    except:
-        return False
-    if input.isdigit():
-        return True
-    else:
-        messagebox.showerror('Error en modelación', 'Revisar tipo de datos ingresados')
-        return False
-
-def makeform(root, fields):
-    title = Label(root, text="Inicialización", width=20, font=("bold",20))
-    title.pack()
-    entries = {}
-    for field in fields:
-        row = Frame(root)
-        lab = Label(row, width=30, text=field+": ", anchor='w')
-        ent = Entry(row, validate="key", validatecommand=(row.register(validModelation), '%P'))
-        row.pack(side = TOP, fill = X, padx = 5 , pady = 5)
-        lab.pack(side = LEFT)
-        ent.pack(side = RIGHT, expand = YES, fill = X)
-        entries[field] = ent
-    return entries
+  Args:
+    inputs (list): Campos solicitados en el formulario inicial.
+  """
+  configuracion = {
+    'pob_ini': int(inputs["Población inicial"].get()),
+    'pob_max': int(inputs["Población máxima"].get()),
+    'objetivo_x': float(inputs["Posicion objetivo X"].get()),
+    'objetivo_y': float(inputs["Posicion objetivo Y"].get()),
+  }
+  modelado = Modelo(configuracion)
+  iniciar_algoritmo(modelado)
 
 if __name__ == '__main__':
-    root.title("App-SGA - UPCH IA")
-    root.geometry("300x320")
-    root.resizable(0,0)
-    ents = makeform(root, fields)
-    root.bind('<Return>', (lambda event, e = ents: fetch(e)))
-    b1 = Button(root, text = 'Iniciar',
-       command=(lambda e = ents: start(e)), bg="green",fg='white')
-    b1.pack(side = LEFT, padx = 5, pady = 5, expand = YES)
-    b3 = Button(root, text = 'Quit', command = root.quit, bg="red",fg='white')
-    b3.pack(side = LEFT, padx = 5, pady = 5, expand = YES)
-    root.mainloop()
+  """Funcion main para crear la ventana inicial.
+  """
+  ventana = Tk()
+  ventana.title("Tiro al blanco - IA")
+  ventana.resizable(0,0)
+  entries = Grafico.crear_formulario(ventana)
+  btn1 = Button(ventana, text = 'Iniciar',
+    command=(lambda e=entries: cargar_configuracion(e)), bg="green",fg='white')
+  btn1.pack(side = LEFT, pady = 5, expand = YES)
+  btn2 = Button(ventana, text = 'Quitar', command = ventana.quit, bg="red",fg='white')
+  btn2.pack(side = LEFT, pady = 5, expand = YES)
+  ventana.mainloop()
