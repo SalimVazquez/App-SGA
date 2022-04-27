@@ -181,6 +181,8 @@ def iniciar_algoritmo(modelado):
     contador_generaciones += 1
   generaciones, maxs, mins, avgs = Util.split_informacion_grafica(HISTORIA_GENERACIONES)
   Grafico.graficar_evolucion(generaciones, maxs, mins, avgs)
+  puntos_x, puntos_y = Util.data_parabola(poblacion)
+  Grafico.graficar_impacto(puntos_x, puntos_y, modelado.get_objetivo_x(), modelado.get_objetivo_y(), poblacion)
 
 def cargar_configuracion(inputs):
   """Funcion encargada de guardar el modelado del algoritmo
@@ -197,6 +199,19 @@ def cargar_configuracion(inputs):
   modelado = Modelo(configuracion)
   iniciar_algoritmo(modelado)
 
+def validar_formulario(inputs):
+  field_pob_inicial = inputs['Población inicial'].get()
+  field_pob_max = inputs['Población máxima'].get()
+  error = ''
+  if field_pob_inicial >= field_pob_max:
+    error = "La población inicial debe de ser menor a la población máxima"
+  elif int(field_pob_inicial) < 5:
+    error = "La población inicial debe de ser mayor a 4 individuos"
+  if len(error) != 0:
+    Grafico.mostrar_alerta('ERROR', error)
+  else:
+    cargar_configuracion(inputs)
+
 if __name__ == '__main__':
   """Funcion main para crear la ventana inicial.
   """
@@ -205,7 +220,7 @@ if __name__ == '__main__':
   ventana.resizable(0,0)
   entries = Grafico.crear_formulario(ventana)
   btn1 = Button(ventana, text = 'Iniciar',
-    command=(lambda e=entries: cargar_configuracion(e)), bg="green",fg='white')
+    command=(lambda e=entries: validar_formulario(e)), bg="green",fg='white')
   btn1.pack(side = LEFT, pady = 5, expand = YES)
   btn2 = Button(ventana, text = 'Quitar', command = ventana.quit, bg="red",fg='white')
   btn2.pack(side = LEFT, pady = 5, expand = YES)

@@ -21,3 +21,4 @@ Considerando que el tiro parabólico está afectado por ruido (viento).
 En esta problematica se presenta la opción de minimizar, lo que indica que nuestros mejores individuos serán los que tengan el puntaje más bajo en el **Fitness**.
 ___
 Esta es una aplicación de algoritmos geneticos, con base a una [actividad previa](https://github.com/SvS30/SGA).
+Si deseas más información de la funcionalidad, revisa [Wiki](https://github.com/SvS30/App-SGA/wiki).

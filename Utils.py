@@ -1,7 +1,29 @@
 from math import cos, sin, radians, sqrt
-from random import randint, uniform
+from random import uniform
 
 class Util:
+
+  @staticmethod
+  def data_parabola(poblacion):
+    puntos_X, puntos_Y = [], []
+    avance_tiempo = 0.01
+    gravedad = 9.81
+    for i in range(5):
+      tiempo = 0
+      x = 0
+      y = 0
+      vx = poblacion[i]['Vo'] * cos(radians(poblacion[i]['Elevacion']))
+      vy = poblacion[i]['Vo'] * sin(radians(poblacion[i]['Elevacion']))
+      puntos_X.clear()
+      puntos_Y.clear()
+
+      while y>=-0.01:
+        tiempo = tiempo + avance_tiempo
+        x = x + vx * tiempo
+        y = y + vy * tiempo - gravedad * tiempo ** 2
+        puntos_X.append(x)
+        puntos_Y.append(y)
+    return puntos_X, puntos_Y
 
   @staticmethod
   def split_informacion_grafica(data_grafica):
