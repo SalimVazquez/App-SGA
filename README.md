@@ -1,44 +1,34 @@
-## Aplicación de Algoritmos genéticos - Tiro al blanco
-Dada la posición de un objeto fijo y un cañón lanza balas en un mundo 2D.
-Tomando en cuenta la distancia del objeto al punto donde cae la bala. **determinar cual debe ser la configuración del cañón**
+# Tiro al blanco
+Algoritmo tipo evolutivo y realiza un procedimiento de optimización inspirado en la teoría biológica de los genotipos o individuos, o soluciones potenciales más aptos que se utilizarán en la creación de los descendientes.
 
-Considerar que el tiro parabólico está afectado por ruido (viento)
-
-### Criterio de aceptación
-En esta problematica se presenta la opción de minimizar, lo que indica que nuestros mejores individuos serán los que tengan el puntaje más bajo en el Fitness (calcular distancia de impacto al objetivo).
+Se usan procesos como lo son: **Cruza, Mutación, Clonación**. Así como también una **Selección** de acuerdo con algún criterio a satisfacer (maximizar o minimizar), en función del cual se decide cuáles son los individuos más adaptados, y cuáles los menos aptos.
 
 ### Requerimientos
 ```
-Python >= 3.6
-Tkinter >= 8.6
+Python >= 3.8
+tk >= 0.1.0
 Numpy >= 1.19.5
-Matplotlib >= 3.3.4
+Matplotlib >= 3.5.1
 ```
+De igual forma se anexo un txt con los plugins necesarios, puede instarlos con `pip install -r requerimientos.txt`.
+Luego de esto, ejecuta `principal.py`.
 
-### Configuración cañon
-- [Azimuth: \alpha (Orientación del cañon)](https://www.photopills.com/es/articulos/entendiendo-el-azimut-la-elevacion)
-- [Elevación: \Theta (Angulo vertical)](https://www.photopills.com/es/articulos/entendiendo-el-azimut-la-elevacion)
-- Velocidad inicial: Vo
+### Criterio de aceptación
+Dada la posición de un objetivo fijo y un cañón que lanza balas en un mundo 2D **determinar cual debe ser la configuración del cañón**, para acertar el impacto al objetivo.
 
-### Ecuaciones
-- Alcance máximo
-	xMax = Vo² &bull; sin(2&bull;\Theta) / g
+#### Configuración del cañon
+| -- | Velocidad Inicial | Angulo de elevación | Azimuth |
+| --- | --- | --- | --- |
+| Valores iniciales | [0-100]m/s | [0-90]° | [0-360]° |
 
-- Convertir coordenada polar a cartesiana
-	- X: xMax &bull; cos(\alpha)
-	- Y: xMax &bull; sen(\alpha)
+Considerando que el tiro parabólico está afectado por ruido (viento).
 
-- Distancia entre 2 puntos
-	- fitness: \surd(X<sub>2</sub>-X<sub>1</sub>)² + (Y<sub>2</sub>-Y<sub>1</sub>)²
+En esta problematica se presenta la opción de minimizar, lo que indica que nuestros mejores individuos serán los que tengan el puntaje más bajo en el **Fitness**.
 
-- Cruza
-	- a&bull;p1 + (1-a)&bull;p2
-		- a: numero aleatorio entre (0,1)
-		- p1: gen individuo 1
-		- p2: gen individuo 2
-
-- Mutación
-	- h1 + y&bull;R
-		- h1: gen individuo
-		- y: numero aleatorio entre (-1,1)
-		- R: rango/2
+El sistema **finalizará** al registrar:
+- Un impacto en el objetivo.
+- Un impacto que se haya acercado a `0.6`m del objetivo.
+- Al haber transcurrido 150 iteraciones y no se encontrará una configuración adecuada.
+___
+Esta es una aplicación de algoritmos geneticos, con base a una [actividad previa](https://github.com/SvS30/SGA).
+Si deseas más información de la funcionalidad, revisa [Wiki](https://github.com/SvS30/App-SGA/wiki).
